@@ -3,11 +3,15 @@ import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:path_provider/path_provider.dart';
-
+// import 'package:path_provider/path_provider.dart';
+import 'package:encrypt/encrypt.dart';
 import 'package:path/path.dart' as p;
 
 part 'drift_db.g.dart';
+
+class LocalExcelData extends Table{
+  IntColumn get id => integer().autoIncrement()();
+}
 
 class LocalAuthUsers extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -36,6 +40,15 @@ class LocalAuthUserDao extends DatabaseAccessor<MyDatabase>
     with _$LocalAuthUserDaoMixin {
   final MyDatabase db;
   LocalAuthUserDao(this.db) : super(db);
+
+  Future<LocalAuthUser> authenticate(
+      {required String email, required String password}) {
+    return (select(localAuthUsers)
+          ..where((tbl) => tbl.email.equals(email))
+          ..where((tbl) => tbl.password.equals(password)))
+        .getSingle();
+  }
+
   Future<List<LocalAuthUser>> getAllLocalAuthUsers() =>
       select(localAuthUsers).get();
   Stream<List<LocalAuthUser>> watchAllLocalAuthUsers() {
@@ -59,8 +72,12 @@ LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     // put the database file, called db.sqlite here, into the documents folder
     // for your app.
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'db.sqlite'));
+    var pathToExe = Platform.resolvedExecutable;
+    pathToExe = pathToExe.substring(0, pathToExe.indexOf("excel_native.exe"));
+    // final dbFolder = await getApplicationDocumentsDirectory();
+    final file = File(p.join(pathToExe, 'config'));
+    print(pathToExe);
+    print(file);
     // print("loading file");
     if (!await file.exists()) {
       // Extract the pre-populated database file from assets

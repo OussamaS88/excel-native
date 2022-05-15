@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       providers: [
         RepositoryProvider.value(value: excelApi),
         RepositoryProvider.value(value: authService),
-        RepositoryProvider.value(value: MyDatabase().localAuthUserDao),
+        // RepositoryProvider.value(value: MyDatabase().localAuthUserDao),
       ],
       child: BlocProvider(
         create: (_) => AppBloc(
@@ -36,45 +36,48 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final database = context.read<LocalAuthUserDao>();
+    // final database = context.read<LocalAuthUserDao>();
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.dark(),
-        // home: FlowBuilder<AppStatus>(
-        //   state: context.select((AppBloc bloc) => bloc.state.status),
-        //   onGeneratePages: onGenerateAppViewPages,
-        // ),
-        home: Scaffold(
-          appBar: AppBar(title: const Text("data")),
-          body: Column(
-            children: [
-              ElevatedButton(
-                  onPressed: () async {
-                    await database.insertLocalAuthUser(LocalAuthUsersCompanion(email: drift.Value("email"), password: drift.Value("password")));
-                  },
-                  child: const Text("data")),
-              StreamBuilder(
-                  stream: database.watchAllLocalAuthUsers(),
-                  builder:
-                      (context, AsyncSnapshot<List<LocalAuthUser>> snapshot) {
-                    final localAuthUsers = snapshot.data ?? [];
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark(),
+      home: FlowBuilder<AppStatus>(
+        state: context.select((AppBloc bloc) => bloc.state.status),
+        onGeneratePages: onGenerateAppViewPages,
+      ),
+      // home: Scaffold(
+      //   appBar: AppBar(title: const Text("data")),
+      //   body: Column(
+      //     children: [
+      //       ElevatedButton(
+      //           onPressed: () async {
+      //             await database.insertLocalAuthUser(LocalAuthUsersCompanion(
+      //                 email: drift.Value("email"),
+      //                 password: drift.Value("password")));
+      //           },
+      //           child: const Text("data")),
+      //       StreamBuilder(
+      //           stream: database.watchAllLocalAuthUsers(),
+      //           builder:
+      //               (context, AsyncSnapshot<List<LocalAuthUser>> snapshot) {
+      //             final localAuthUsers = snapshot.data ?? [];
 
-                    print("ddd");
-                    print(localAuthUsers);
+      //             print("ddd");
+      //             print(localAuthUsers);
 
-                    return Expanded(
-                      child: ListView.builder(
-                          itemCount: localAuthUsers.length,
-                          itemBuilder: (_, index) {
-                            print("object");
-                            final lau = localAuthUsers[index];
-                            return Text(
-                                lau.id.toString() + lau.email + lau.password);
-                          }),
-                    );
-                  }),
-            ],
-          ),
-        ));
+      //             return Expanded(
+      //               child: ListView.builder(
+      //                   itemCount: localAuthUsers.length,
+      //                   itemBuilder: (_, index) {
+      //                     print("object");
+      //                     final lau = localAuthUsers[index];
+      //                     return Text(
+      //                         lau.id.toString() + lau.email + lau.password);
+      //                   }),
+      //             );
+      //           }),
+      //     ],
+      //   ),
+      // ),
+    );
   }
 }

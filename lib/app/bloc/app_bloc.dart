@@ -15,7 +15,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc({
     required AuthService authService,
   })  : _authService = authService,
-        super(authService.currentUser != null
+        super(authService.currentUser != AuthUser.empty
             ? AppState.authenticated(authService.currentUser!)
             : const AppState.unauthenticated()) {
     on<AppLogoutRequested>(_appLogOutRequested);

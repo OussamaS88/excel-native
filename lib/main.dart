@@ -8,9 +8,13 @@ void main() {
   final ExcelApi excelApi = ExcelApi(
       excelReadFilePath: "excelReadFilePath",
       excelExportFilePath: "excelExportFilePath");
-      
+
   final _authService = AuthService.fromLocal();
+  _authService.initialize();
   runApp(
-    MyApp(excelApi: excelApi, authService: _authService,),
+    MyApp(
+      excelApi: excelApi,
+      authService: _authService,
+    ),
   );
 }

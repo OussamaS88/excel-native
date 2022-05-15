@@ -47,6 +47,7 @@ dependencies:
   drift: ^1.6.0
   path_provider: ^2.0.10
   path: ^1.8.1
+  encrypt: ^5.0.1
 
 dev_dependencies:
   flutter_test:
