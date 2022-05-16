@@ -13,7 +13,6 @@ class ExcelRow extends Equatable {
         cMap.add("");
       } else {
         if (d.rowIndex == 0) {
-          print("cast");
           return ExcelRow.empty;
         }
         cMap.add(d.value);

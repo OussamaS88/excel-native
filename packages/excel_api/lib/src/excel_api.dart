@@ -27,7 +27,6 @@ class ExcelApi {
         }
       }
     }
-    print(mp);
     return mp;
   }
 
@@ -39,17 +38,13 @@ class ExcelApi {
       if (t != null) {
         for (var row in t.rows) {
           var k = ExcelRow.fromExcelRow(row: row);
-          print(k);
           if (k == ExcelRow.empty) {
-            print("found empty");
             continue;
           }
-          print(k);
           mp.add(k);
         }
       }
     }
-    print(mp);
     return mp;
   }
 }

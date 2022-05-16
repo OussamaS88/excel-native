@@ -16,6 +16,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc(this._excelApi) : super(const HomeState()) {
     on<LoadExcelHomeEvent>(_loadExcelHomeEvent);
     on<InsertFromExcelToLocalHomeEvent>(_insertFromExcelToLocalHomeEvent);
+    on<UnloadExcelHomeEvent>(_unloadExcelHomeEvent);
   }
 
   FutureOr<void> _loadExcelHomeEvent(
@@ -42,16 +43,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       return null;
     }
     try {
-      print("object");
       List<ExcelRow> l =
           _excelApi.readRowsToExcelRowsFromBytes(event.excelBytes!);
-      print(l);
       emit(state.copyWith(
         homeExcelStatus: HomeExcelStatus.loaded,
         excelRows: l,
         homeStatus: HomeStatus.ready,
       ));
-      print(state.excelRows);
       // print("Loaded data successfully.");
     } catch (e) {
       emit(state.copyWith(
@@ -77,10 +75,35 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(state.copyWith(
         homeStatus: HomeStatus.loading,
         homeLocalStatus: HomeLocalStatus.inserting));
+    print("inserting...");
     var dao = event.db.localExcelDataDao;
 
     await dao.insertMultipleLocalExcelData(state.excelRows!);
+    print("done inserting.");
     emit(state.copyWith(
         homeStatus: HomeStatus.ready, homeLocalStatus: HomeLocalStatus.idle));
+  }
+
+  FutureOr<void> _unloadExcelHomeEvent(
+      UnloadExcelHomeEvent event, Emitter<HomeState> emit) {
+    if (state.homeStatus != HomeStatus.ready) {
+      return null;
+    }
+    emit(state.copyWith(homeStatus: HomeStatus.loading));
+    if (state.homeExcelStatus != HomeExcelStatus.loaded) {
+      emit(
+        state.copyWith(
+            homeStatus: HomeStatus.ready,
+            homeExcelStatus: HomeExcelStatus.error,
+            errorMessage: "No excel file has been loaded"),
+      );
+      return null;
+    }
+    emit(state.copyWith(
+      homeStatus: HomeStatus.ready,
+      homeExcelStatus: HomeExcelStatus.empty,
+      excelBytes: null,
+      excelRows: [],
+    ));
   }
 }

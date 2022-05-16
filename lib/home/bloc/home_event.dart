@@ -12,6 +12,10 @@ class LoadExcelHomeEvent extends HomeEvent {
   const LoadExcelHomeEvent({required this.excelBytes});
 }
 
+class UnloadExcelHomeEvent extends HomeEvent {
+  const UnloadExcelHomeEvent();
+}
+
 class InsertFromExcelToLocalHomeEvent extends HomeEvent {
   final MyDatabase db;
   const InsertFromExcelToLocalHomeEvent({required this.db});
