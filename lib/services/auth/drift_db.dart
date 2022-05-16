@@ -58,9 +58,15 @@ class LocalExcelDataDao extends DatabaseAccessor<MyDatabase>
           phoneNumber: row.mp[4],
           age: row.mp[5],
         );
-      }),
-          mode: InsertMode.insertOrReplace);
+      }), mode: InsertMode.insertOrReplace);
     });
+  }
+
+  Future<List<LocalExcelData>> getAllLocalExcelData() {
+    return select(localExcelDatas).get();
+  }
+  Stream<List<LocalExcelData>> watchAllLocalExcelData() {
+    return select(localExcelDatas).watch();
   }
 }
 

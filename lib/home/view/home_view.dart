@@ -1,5 +1,6 @@
 import 'package:excel_api/excel_api.dart';
 import 'package:excel_native/app/bloc/app_bloc.dart';
+import 'package:excel_native/services/auth/drift_db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../home.dart';
@@ -10,6 +11,8 @@ class HomeView extends StatelessWidget {
   static Page page() => const MaterialPage<void>(child: HomeView());
   @override
   Widget build(BuildContext context) {
+    MyDatabase localDb = context.read<MyDatabase>();
+    ExcelApi excel = context.read<ExcelApi>();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home"),
@@ -34,7 +37,7 @@ class HomeView extends StatelessWidget {
         ],
       ),
       body: BlocProvider(
-        create: (context) => HomeBloc(context.read<ExcelApi>()),
+        create: (context) => HomeBloc(db: localDb, excelApi: excel),
         child: const HomePage(),
       ),
     );

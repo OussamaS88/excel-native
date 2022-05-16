@@ -9,6 +9,7 @@ enum HomeExcelStatus {
 enum HomeLocalStatus {
   idle,
   inserting,
+  reading,
   error,
 }
 
@@ -25,6 +26,7 @@ class HomeState extends Equatable {
   final List<ExcelRow>? excelRows;
   final Uint8List? excelBytes;
   final HomeStatus homeStatus;
+  final List<ExcelRow>? excelRowsFromDB;
 
   const HomeState({
     this.homeStatus = HomeStatus.ready,
@@ -32,6 +34,7 @@ class HomeState extends Equatable {
     this.homeLocalStatus = HomeLocalStatus.idle,
     this.errorMessage,
     this.excelRows = const [],
+    this.excelRowsFromDB = const [],
     this.excelBytes,
   });
 
@@ -45,6 +48,7 @@ class HomeState extends Equatable {
     String? errorMessage,
     List<ExcelRow>? excelRows,
     Uint8List? excelBytes,
+    List<ExcelRow>? excelRowsFromDB,
   }) {
     return HomeState(
       homeExcelStatus: homeExcelStatus ?? this.homeExcelStatus,
@@ -53,6 +57,7 @@ class HomeState extends Equatable {
       errorMessage: errorMessage ?? this.errorMessage,
       excelRows: excelRows ?? this.excelRows,
       excelBytes: excelBytes ?? this.excelBytes,
+      excelRowsFromDB: excelRowsFromDB ?? this.excelRowsFromDB,
     );
   }
 }
