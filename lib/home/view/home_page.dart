@@ -1,5 +1,8 @@
+import 'package:drift/drift.dart' as drift;
 import 'package:excel_api/excel_api.dart';
 import 'package:excel_native/app/bloc/app_bloc.dart';
+import 'package:excel_native/services/auth/auth_service.dart';
+import 'package:excel_native/services/auth/drift_db.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,11 +13,12 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var excel = context.read<ExcelApi>();
+    ExcelApi excel = context.read<ExcelApi>();
+    MyDatabase localDb = context.read<MyDatabase>();
     return Column(
       children: [
         Center(
-          child: Text("Welcome " + context.read<AppBloc>().state.user.email),
+          child: Text("Welcome ${context.read<AppBloc>().state.user.email}"),
         ),
         Center(
             child: Padding(
@@ -40,6 +44,22 @@ class HomePage extends StatelessWidget {
             child: const Text("Load from Excel"),
           ),
         )),
+        Center(
+          child: ElevatedButton(
+              onPressed: () {
+                // localDb.insertLocaExcelData(const LocalExcelDatasCompanion(
+                //   fName: drift.Value("Name"),
+                //   lName: drift.Value("Last"),
+                //   phoneNumber: drift.Value("+96100990099"),
+                //   location: drift.Value("Tripoli"),
+                //   age: drift.Value(60),
+                // ));
+                context
+                    .read<HomeBloc>()
+                    .add(InsertFromExcelToLocalHomeEvent(db: localDb));
+              },
+              child: const Text("Insert random data")),
+        ),
       ],
     );
   }

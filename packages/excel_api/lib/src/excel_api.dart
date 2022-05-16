@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:excel_api/src/models/models.dart';
+
 import '../excel_api.dart';
 import 'dart:io';
 import 'package:path/path.dart';
@@ -25,6 +27,7 @@ class ExcelApi {
         }
       }
     }
+    print(mp);
     return mp;
   }
 
@@ -35,10 +38,18 @@ class ExcelApi {
       var t = excel.tables[table];
       if (t != null) {
         for (var row in t.rows) {
-          mp.add(ExcelRow.fromExcelRow(row: row));
+          var k = ExcelRow.fromExcelRow(row: row);
+          print(k);
+          if (k == ExcelRow.empty) {
+            print("found empty");
+            continue;
+          }
+          print(k);
+          mp.add(k);
         }
       }
     }
+    print(mp);
     return mp;
   }
 }

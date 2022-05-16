@@ -11,14 +11,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class MyApp extends StatelessWidget {
   final ExcelApi excelApi;
   final AuthService authService;
-  const MyApp({Key? key, required this.excelApi, required this.authService})
-      : super(key: key);
+  final MyDatabase db;
+  const MyApp({
+    Key? key,
+    required this.excelApi,
+    required this.authService,
+    required this.db,
+  }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider.value(value: excelApi),
         RepositoryProvider.value(value: authService),
+        RepositoryProvider.value(value: db),
         // RepositoryProvider.value(value: MyDatabase().localAuthUserDao),
       ],
       child: BlocProvider(

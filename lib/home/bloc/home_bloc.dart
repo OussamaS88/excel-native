@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:drift/drift.dart';
 import 'package:excel_api/excel_api.dart';
+import 'package:excel_native/services/auth/drift_db.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 
@@ -21,16 +22,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       LoadExcelHomeEvent event, Emitter<HomeState> emit) {
     if (state.homeStatus != HomeStatus.ready) return null;
     if (state.homeExcelStatus == HomeExcelStatus.loaded) {
-      print("cleaning loaded excel...");
+      // print("cleaning loaded excel...");
       emit(state.copyWith(homeStatus: HomeStatus.loading));
       emit(state.copyWith(
           excelBytes: null,
           excelRows: [],
           homeExcelStatus: HomeExcelStatus.empty));
-      print("done cleaning.");
+      // print("done cleaning.");
       emit(state.copyWith(homeStatus: HomeStatus.ready));
     }
-    print("loading data...");
+    // print("loading data...");
     emit(state.copyWith(homeStatus: HomeStatus.loading));
     if (event.excelBytes == null) {
       emit(state.copyWith(
@@ -41,26 +42,45 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       return null;
     }
     try {
+      print("object");
       List<ExcelRow> l =
           _excelApi.readRowsToExcelRowsFromBytes(event.excelBytes!);
+      print(l);
       emit(state.copyWith(
         homeExcelStatus: HomeExcelStatus.loaded,
         excelRows: l,
         homeStatus: HomeStatus.ready,
       ));
       print(state.excelRows);
-      print("Loaded data successfully.");
+      // print("Loaded data successfully.");
     } catch (e) {
       emit(state.copyWith(
         homeExcelStatus: HomeExcelStatus.error,
         errorMessage: "Excel error occurred.",
         homeStatus: HomeStatus.ready,
       ));
-      print("Error loading data.");
+      print(e);
       return null;
     }
   }
 
   FutureOr<void> _insertFromExcelToLocalHomeEvent(
-      InsertFromExcelToLocalHomeEvent event, Emitter<HomeState> emit) {}
+      InsertFromExcelToLocalHomeEvent event, Emitter<HomeState> emit) async {
+    if (state.homeStatus != HomeStatus.ready) return null;
+
+    if (state.homeExcelStatus != HomeExcelStatus.loaded) {
+      emit(state.copyWith(
+        homeLocalStatus: HomeLocalStatus.error,
+        errorMessage: "No excel file has been loaded.",
+      ));
+    }
+    emit(state.copyWith(
+        homeStatus: HomeStatus.loading,
+        homeLocalStatus: HomeLocalStatus.inserting));
+    var dao = event.db.localExcelDataDao;
+
+    await dao.insertMultipleLocalExcelData(state.excelRows!);
+    emit(state.copyWith(
+        homeStatus: HomeStatus.ready, homeLocalStatus: HomeLocalStatus.idle));
+  }
 }

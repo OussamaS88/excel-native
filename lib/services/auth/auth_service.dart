@@ -1,5 +1,6 @@
 import 'package:excel_native/services/auth/auth_provider.dart';
 import 'package:excel_native/services/auth/auth_user.dart';
+import 'package:excel_native/services/auth/drift_db.dart';
 import 'package:excel_native/services/auth/local_auth_provider.dart';
 // import 'package:excel_native/services/auth/firebase_auth_provider.dart';
 
@@ -13,8 +14,9 @@ class AuthService implements AuthProvider {
   //   return AuthService(firebaseAuthProvider);
   // }
 
-  factory AuthService.fromLocal(){
+  factory AuthService.fromLocal({required MyDatabase db}) {
     final localAuthProvider = LocalAuthProvider();
+    localAuthProvider.db = db;
     return AuthService(localAuthProvider);
   }
 

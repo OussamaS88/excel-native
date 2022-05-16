@@ -1,4 +1,5 @@
 import 'package:excel_native/services/auth/auth_user.dart';
+import 'package:excel_native/services/auth/drift_db.dart';
 
 abstract class AuthProvider {
   Stream<AuthUser> get user;
@@ -19,4 +20,5 @@ abstract class AuthProvider {
   });
 
   Future<void> logOut();
+
 }

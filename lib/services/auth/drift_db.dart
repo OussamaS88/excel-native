@@ -2,15 +2,21 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:excel_api/excel_api.dart';
 import 'package:flutter/services.dart' show rootBundle;
 // import 'package:path_provider/path_provider.dart';
-import 'package:encrypt/encrypt.dart';
+// import 'package:encrypt/encrypt.dart';
 import 'package:path/path.dart' as p;
 
 part 'drift_db.g.dart';
 
-class LocalExcelData extends Table{
+class LocalExcelDatas extends Table {
   IntColumn get id => integer().autoIncrement()();
+  TextColumn get fName => text()();
+  TextColumn get lName => text()();
+  TextColumn get location => text()();
+  TextColumn get phoneNumber => text()();
+  IntColumn get age => integer()();
 }
 
 class LocalAuthUsers extends Table {
@@ -19,7 +25,9 @@ class LocalAuthUsers extends Table {
   TextColumn get password => text().withLength(min: 4, max: 100)();
 }
 
-@DriftDatabase(tables: [LocalAuthUsers], daos: [LocalAuthUserDao])
+@DriftDatabase(
+    tables: [LocalAuthUsers, LocalExcelDatas],
+    daos: [LocalAuthUserDao, LocalExcelDataDao])
 class MyDatabase extends _$MyDatabase {
   // we tell the database where to store the data with this constructor
   MyDatabase() : super(_openConnection());
@@ -28,6 +36,32 @@ class MyDatabase extends _$MyDatabase {
   // Migrations are covered later in the documentation.
   @override
   int get schemaVersion => 1;
+}
+
+@DriftAccessor(tables: [LocalExcelDatas])
+class LocalExcelDataDao extends DatabaseAccessor<MyDatabase>
+    with _$LocalExcelDataDaoMixin {
+  final MyDatabase db;
+  LocalExcelDataDao(this.db) : super(db);
+
+  Future insertLocaExcelData(LocalExcelDatasCompanion localExcelData) =>
+      into(localExcelDatas)
+          .insert(localExcelData, mode: InsertMode.insertOrIgnore);
+
+  Future<void> insertMultipleLocalExcelData(List<ExcelRow> rowsList) async {
+    await batch((batch) {
+      batch.insertAll(localExcelDatas, rowsList.map((row) {
+        return LocalExcelDatasCompanion.insert(
+          fName: row.mp[1],
+          lName: row.mp[2],
+          location: row.mp[3],
+          phoneNumber: row.mp[4],
+          age: row.mp[5],
+        );
+      }),
+          mode: InsertMode.insertOrReplace);
+    });
+  }
 }
 
 @DriftAccessor(tables: [
@@ -76,8 +110,8 @@ LazyDatabase _openConnection() {
     pathToExe = pathToExe.substring(0, pathToExe.indexOf("excel_native.exe"));
     // final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(pathToExe, 'config'));
-    print(pathToExe);
-    print(file);
+    // print(pathToExe);
+    // print(file);
     // print("loading file");
     if (!await file.exists()) {
       // Extract the pre-populated database file from assets

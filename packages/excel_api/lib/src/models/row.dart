@@ -12,12 +12,16 @@ class ExcelRow extends Equatable {
       if (d == null) {
         cMap.add("");
       } else {
+        if (d.rowIndex == 0) {
+          print("cast");
+          return ExcelRow.empty;
+        }
         cMap.add(d.value);
       }
     }
     return ExcelRow(mp: cMap);
   }
-
+  static const empty = ExcelRow(mp: []);
   @override
   List<Object?> get props => [mp];
 }
