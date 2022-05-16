@@ -1,3 +1,4 @@
+import 'package:excel_api/excel_api.dart';
 import 'package:excel_native/app/bloc/app_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,7 +33,10 @@ class HomeView extends StatelessWidget {
           )
         ],
       ),
-      body: const HomePage(),
+      body: BlocProvider(
+        create: (context) => HomeBloc(context.read<ExcelApi>()),
+        child: const HomePage(),
+      ),
     );
   }
 }

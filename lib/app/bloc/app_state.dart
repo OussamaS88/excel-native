@@ -5,7 +5,6 @@ enum AppStatus {
   unauthenticated,
 }
 
-
 class AppState extends Equatable {
   final AppStatus status;
   final AuthUser user;
