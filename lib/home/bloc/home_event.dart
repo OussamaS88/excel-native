@@ -24,6 +24,14 @@ class LoadFromDBHomeEvent extends HomeEvent {
   const LoadFromDBHomeEvent();
 }
 
+class WatchFromDBHomeEvent extends HomeEvent {
+  const WatchFromDBHomeEvent();
+}
+
 class SaveToExcelHomeEvent extends HomeEvent {
   const SaveToExcelHomeEvent();
+}
+
+class CalculateAgeStatisticsHomeEvent extends HomeEvent {
+  const CalculateAgeStatisticsHomeEvent();
 }

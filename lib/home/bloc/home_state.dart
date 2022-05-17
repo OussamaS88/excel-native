@@ -27,6 +27,7 @@ class HomeState extends Equatable {
   final Uint8List? excelBytes;
   final HomeStatus homeStatus;
   final List<ExcelRow>? excelRowsFromDB;
+  final List<charts.Series<AgeStatistics, String>>? seriesList;
 
   const HomeState({
     this.homeStatus = HomeStatus.ready,
@@ -36,6 +37,7 @@ class HomeState extends Equatable {
     this.excelRows = const [],
     this.excelRowsFromDB = const [],
     this.excelBytes,
+    this.seriesList = const [],
   });
 
   @override
@@ -49,6 +51,7 @@ class HomeState extends Equatable {
     List<ExcelRow>? excelRows,
     Uint8List? excelBytes,
     List<ExcelRow>? excelRowsFromDB,
+    List<charts.Series<AgeStatistics, String>>? seriesList,
   }) {
     return HomeState(
       homeExcelStatus: homeExcelStatus ?? this.homeExcelStatus,
@@ -58,6 +61,7 @@ class HomeState extends Equatable {
       excelRows: excelRows ?? this.excelRows,
       excelBytes: excelBytes ?? this.excelBytes,
       excelRowsFromDB: excelRowsFromDB ?? this.excelRowsFromDB,
+      seriesList: seriesList ?? this.seriesList,
     );
   }
 }
