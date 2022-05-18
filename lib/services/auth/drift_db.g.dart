@@ -545,26 +545,869 @@ class $LocalExcelDatasTable extends LocalExcelDatas
   }
 }
 
+class Camp extends DataClass implements Insertable<Camp> {
+  final int id;
+  final String location;
+  Camp({required this.id, required this.location});
+  factory Camp.fromData(Map<String, dynamic> data, {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    return Camp(
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      location: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}location'])!,
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['location'] = Variable<String>(location);
+    return map;
+  }
+
+  CampsCompanion toCompanion(bool nullToAbsent) {
+    return CampsCompanion(
+      id: Value(id),
+      location: Value(location),
+    );
+  }
+
+  factory Camp.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Camp(
+      id: serializer.fromJson<int>(json['id']),
+      location: serializer.fromJson<String>(json['location']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'location': serializer.toJson<String>(location),
+    };
+  }
+
+  Camp copyWith({int? id, String? location}) => Camp(
+        id: id ?? this.id,
+        location: location ?? this.location,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Camp(')
+          ..write('id: $id, ')
+          ..write('location: $location')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, location);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Camp && other.id == this.id && other.location == this.location);
+}
+
+class CampsCompanion extends UpdateCompanion<Camp> {
+  final Value<int> id;
+  final Value<String> location;
+  const CampsCompanion({
+    this.id = const Value.absent(),
+    this.location = const Value.absent(),
+  });
+  CampsCompanion.insert({
+    this.id = const Value.absent(),
+    required String location,
+  }) : location = Value(location);
+  static Insertable<Camp> custom({
+    Expression<int>? id,
+    Expression<String>? location,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (location != null) 'location': location,
+    });
+  }
+
+  CampsCompanion copyWith({Value<int>? id, Value<String>? location}) {
+    return CampsCompanion(
+      id: id ?? this.id,
+      location: location ?? this.location,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (location.present) {
+      map['location'] = Variable<String>(location.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CampsCompanion(')
+          ..write('id: $id, ')
+          ..write('location: $location')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CampsTable extends Camps with TableInfo<$CampsTable, Camp> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CampsTable(this.attachedDatabase, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
+      'id', aliasedName, false,
+      type: const IntType(),
+      requiredDuringInsert: false,
+      defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
+  final VerificationMeta _locationMeta = const VerificationMeta('location');
+  @override
+  late final GeneratedColumn<String?> location = GeneratedColumn<String?>(
+      'location', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 2, maxTextLength: 100),
+      type: const StringType(),
+      requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [id, location];
+  @override
+  String get aliasedName => _alias ?? 'camps';
+  @override
+  String get actualTableName => 'camps';
+  @override
+  VerificationContext validateIntegrity(Insertable<Camp> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('location')) {
+      context.handle(_locationMeta,
+          location.isAcceptableOrUnknown(data['location']!, _locationMeta));
+    } else if (isInserting) {
+      context.missing(_locationMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Camp map(Map<String, dynamic> data, {String? tablePrefix}) {
+    return Camp.fromData(data,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+  }
+
+  @override
+  $CampsTable createAlias(String alias) {
+    return $CampsTable(attachedDatabase, alias);
+  }
+}
+
+class Tent extends DataClass implements Insertable<Tent> {
+  final int id;
+  final int campId;
+  Tent({required this.id, required this.campId});
+  factory Tent.fromData(Map<String, dynamic> data, {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    return Tent(
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      campId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}camp_id'])!,
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['camp_id'] = Variable<int>(campId);
+    return map;
+  }
+
+  TentsCompanion toCompanion(bool nullToAbsent) {
+    return TentsCompanion(
+      id: Value(id),
+      campId: Value(campId),
+    );
+  }
+
+  factory Tent.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Tent(
+      id: serializer.fromJson<int>(json['id']),
+      campId: serializer.fromJson<int>(json['campId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'campId': serializer.toJson<int>(campId),
+    };
+  }
+
+  Tent copyWith({int? id, int? campId}) => Tent(
+        id: id ?? this.id,
+        campId: campId ?? this.campId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Tent(')
+          ..write('id: $id, ')
+          ..write('campId: $campId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, campId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Tent && other.id == this.id && other.campId == this.campId);
+}
+
+class TentsCompanion extends UpdateCompanion<Tent> {
+  final Value<int> id;
+  final Value<int> campId;
+  const TentsCompanion({
+    this.id = const Value.absent(),
+    this.campId = const Value.absent(),
+  });
+  TentsCompanion.insert({
+    this.id = const Value.absent(),
+    required int campId,
+  }) : campId = Value(campId);
+  static Insertable<Tent> custom({
+    Expression<int>? id,
+    Expression<int>? campId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (campId != null) 'camp_id': campId,
+    });
+  }
+
+  TentsCompanion copyWith({Value<int>? id, Value<int>? campId}) {
+    return TentsCompanion(
+      id: id ?? this.id,
+      campId: campId ?? this.campId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (campId.present) {
+      map['camp_id'] = Variable<int>(campId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TentsCompanion(')
+          ..write('id: $id, ')
+          ..write('campId: $campId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $TentsTable extends Tents with TableInfo<$TentsTable, Tent> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TentsTable(this.attachedDatabase, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
+      'id', aliasedName, false,
+      type: const IntType(),
+      requiredDuringInsert: false,
+      defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
+  final VerificationMeta _campIdMeta = const VerificationMeta('campId');
+  @override
+  late final GeneratedColumn<int?> campId = GeneratedColumn<int?>(
+      'camp_id', aliasedName, false,
+      type: const IntType(),
+      requiredDuringInsert: true,
+      $customConstraints: 'REFERENCES camps(id)');
+  @override
+  List<GeneratedColumn> get $columns => [id, campId];
+  @override
+  String get aliasedName => _alias ?? 'tents';
+  @override
+  String get actualTableName => 'tents';
+  @override
+  VerificationContext validateIntegrity(Insertable<Tent> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('camp_id')) {
+      context.handle(_campIdMeta,
+          campId.isAcceptableOrUnknown(data['camp_id']!, _campIdMeta));
+    } else if (isInserting) {
+      context.missing(_campIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Tent map(Map<String, dynamic> data, {String? tablePrefix}) {
+    return Tent.fromData(data,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+  }
+
+  @override
+  $TentsTable createAlias(String alias) {
+    return $TentsTable(attachedDatabase, alias);
+  }
+}
+
+class Family extends DataClass implements Insertable<Family> {
+  final int id;
+  final String location;
+  final int campId;
+  final int tentId;
+  final String phoneNum;
+  final String nameEng;
+  final int peopleCount;
+  final int womenCount;
+  final int childrenCount;
+  final int casesCount;
+  Family(
+      {required this.id,
+      required this.location,
+      required this.campId,
+      required this.tentId,
+      required this.phoneNum,
+      required this.nameEng,
+      required this.peopleCount,
+      required this.womenCount,
+      required this.childrenCount,
+      required this.casesCount});
+  factory Family.fromData(Map<String, dynamic> data, {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    return Family(
+      id: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
+      location: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}location'])!,
+      campId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}camp_id'])!,
+      tentId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}tent_id'])!,
+      phoneNum: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}phone_num'])!,
+      nameEng: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}name_eng'])!,
+      peopleCount: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}people_count'])!,
+      womenCount: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}women_count'])!,
+      childrenCount: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}children_count'])!,
+      casesCount: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}cases_count'])!,
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['location'] = Variable<String>(location);
+    map['camp_id'] = Variable<int>(campId);
+    map['tent_id'] = Variable<int>(tentId);
+    map['phone_num'] = Variable<String>(phoneNum);
+    map['name_eng'] = Variable<String>(nameEng);
+    map['people_count'] = Variable<int>(peopleCount);
+    map['women_count'] = Variable<int>(womenCount);
+    map['children_count'] = Variable<int>(childrenCount);
+    map['cases_count'] = Variable<int>(casesCount);
+    return map;
+  }
+
+  FamilysCompanion toCompanion(bool nullToAbsent) {
+    return FamilysCompanion(
+      id: Value(id),
+      location: Value(location),
+      campId: Value(campId),
+      tentId: Value(tentId),
+      phoneNum: Value(phoneNum),
+      nameEng: Value(nameEng),
+      peopleCount: Value(peopleCount),
+      womenCount: Value(womenCount),
+      childrenCount: Value(childrenCount),
+      casesCount: Value(casesCount),
+    );
+  }
+
+  factory Family.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Family(
+      id: serializer.fromJson<int>(json['id']),
+      location: serializer.fromJson<String>(json['location']),
+      campId: serializer.fromJson<int>(json['campId']),
+      tentId: serializer.fromJson<int>(json['tentId']),
+      phoneNum: serializer.fromJson<String>(json['phoneNum']),
+      nameEng: serializer.fromJson<String>(json['nameEng']),
+      peopleCount: serializer.fromJson<int>(json['peopleCount']),
+      womenCount: serializer.fromJson<int>(json['womenCount']),
+      childrenCount: serializer.fromJson<int>(json['childrenCount']),
+      casesCount: serializer.fromJson<int>(json['casesCount']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'location': serializer.toJson<String>(location),
+      'campId': serializer.toJson<int>(campId),
+      'tentId': serializer.toJson<int>(tentId),
+      'phoneNum': serializer.toJson<String>(phoneNum),
+      'nameEng': serializer.toJson<String>(nameEng),
+      'peopleCount': serializer.toJson<int>(peopleCount),
+      'womenCount': serializer.toJson<int>(womenCount),
+      'childrenCount': serializer.toJson<int>(childrenCount),
+      'casesCount': serializer.toJson<int>(casesCount),
+    };
+  }
+
+  Family copyWith(
+          {int? id,
+          String? location,
+          int? campId,
+          int? tentId,
+          String? phoneNum,
+          String? nameEng,
+          int? peopleCount,
+          int? womenCount,
+          int? childrenCount,
+          int? casesCount}) =>
+      Family(
+        id: id ?? this.id,
+        location: location ?? this.location,
+        campId: campId ?? this.campId,
+        tentId: tentId ?? this.tentId,
+        phoneNum: phoneNum ?? this.phoneNum,
+        nameEng: nameEng ?? this.nameEng,
+        peopleCount: peopleCount ?? this.peopleCount,
+        womenCount: womenCount ?? this.womenCount,
+        childrenCount: childrenCount ?? this.childrenCount,
+        casesCount: casesCount ?? this.casesCount,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Family(')
+          ..write('id: $id, ')
+          ..write('location: $location, ')
+          ..write('campId: $campId, ')
+          ..write('tentId: $tentId, ')
+          ..write('phoneNum: $phoneNum, ')
+          ..write('nameEng: $nameEng, ')
+          ..write('peopleCount: $peopleCount, ')
+          ..write('womenCount: $womenCount, ')
+          ..write('childrenCount: $childrenCount, ')
+          ..write('casesCount: $casesCount')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, location, campId, tentId, phoneNum,
+      nameEng, peopleCount, womenCount, childrenCount, casesCount);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Family &&
+          other.id == this.id &&
+          other.location == this.location &&
+          other.campId == this.campId &&
+          other.tentId == this.tentId &&
+          other.phoneNum == this.phoneNum &&
+          other.nameEng == this.nameEng &&
+          other.peopleCount == this.peopleCount &&
+          other.womenCount == this.womenCount &&
+          other.childrenCount == this.childrenCount &&
+          other.casesCount == this.casesCount);
+}
+
+class FamilysCompanion extends UpdateCompanion<Family> {
+  final Value<int> id;
+  final Value<String> location;
+  final Value<int> campId;
+  final Value<int> tentId;
+  final Value<String> phoneNum;
+  final Value<String> nameEng;
+  final Value<int> peopleCount;
+  final Value<int> womenCount;
+  final Value<int> childrenCount;
+  final Value<int> casesCount;
+  const FamilysCompanion({
+    this.id = const Value.absent(),
+    this.location = const Value.absent(),
+    this.campId = const Value.absent(),
+    this.tentId = const Value.absent(),
+    this.phoneNum = const Value.absent(),
+    this.nameEng = const Value.absent(),
+    this.peopleCount = const Value.absent(),
+    this.womenCount = const Value.absent(),
+    this.childrenCount = const Value.absent(),
+    this.casesCount = const Value.absent(),
+  });
+  FamilysCompanion.insert({
+    this.id = const Value.absent(),
+    required String location,
+    required int campId,
+    required int tentId,
+    required String phoneNum,
+    required String nameEng,
+    required int peopleCount,
+    required int womenCount,
+    required int childrenCount,
+    required int casesCount,
+  })  : location = Value(location),
+        campId = Value(campId),
+        tentId = Value(tentId),
+        phoneNum = Value(phoneNum),
+        nameEng = Value(nameEng),
+        peopleCount = Value(peopleCount),
+        womenCount = Value(womenCount),
+        childrenCount = Value(childrenCount),
+        casesCount = Value(casesCount);
+  static Insertable<Family> custom({
+    Expression<int>? id,
+    Expression<String>? location,
+    Expression<int>? campId,
+    Expression<int>? tentId,
+    Expression<String>? phoneNum,
+    Expression<String>? nameEng,
+    Expression<int>? peopleCount,
+    Expression<int>? womenCount,
+    Expression<int>? childrenCount,
+    Expression<int>? casesCount,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (location != null) 'location': location,
+      if (campId != null) 'camp_id': campId,
+      if (tentId != null) 'tent_id': tentId,
+      if (phoneNum != null) 'phone_num': phoneNum,
+      if (nameEng != null) 'name_eng': nameEng,
+      if (peopleCount != null) 'people_count': peopleCount,
+      if (womenCount != null) 'women_count': womenCount,
+      if (childrenCount != null) 'children_count': childrenCount,
+      if (casesCount != null) 'cases_count': casesCount,
+    });
+  }
+
+  FamilysCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? location,
+      Value<int>? campId,
+      Value<int>? tentId,
+      Value<String>? phoneNum,
+      Value<String>? nameEng,
+      Value<int>? peopleCount,
+      Value<int>? womenCount,
+      Value<int>? childrenCount,
+      Value<int>? casesCount}) {
+    return FamilysCompanion(
+      id: id ?? this.id,
+      location: location ?? this.location,
+      campId: campId ?? this.campId,
+      tentId: tentId ?? this.tentId,
+      phoneNum: phoneNum ?? this.phoneNum,
+      nameEng: nameEng ?? this.nameEng,
+      peopleCount: peopleCount ?? this.peopleCount,
+      womenCount: womenCount ?? this.womenCount,
+      childrenCount: childrenCount ?? this.childrenCount,
+      casesCount: casesCount ?? this.casesCount,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (location.present) {
+      map['location'] = Variable<String>(location.value);
+    }
+    if (campId.present) {
+      map['camp_id'] = Variable<int>(campId.value);
+    }
+    if (tentId.present) {
+      map['tent_id'] = Variable<int>(tentId.value);
+    }
+    if (phoneNum.present) {
+      map['phone_num'] = Variable<String>(phoneNum.value);
+    }
+    if (nameEng.present) {
+      map['name_eng'] = Variable<String>(nameEng.value);
+    }
+    if (peopleCount.present) {
+      map['people_count'] = Variable<int>(peopleCount.value);
+    }
+    if (womenCount.present) {
+      map['women_count'] = Variable<int>(womenCount.value);
+    }
+    if (childrenCount.present) {
+      map['children_count'] = Variable<int>(childrenCount.value);
+    }
+    if (casesCount.present) {
+      map['cases_count'] = Variable<int>(casesCount.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FamilysCompanion(')
+          ..write('id: $id, ')
+          ..write('location: $location, ')
+          ..write('campId: $campId, ')
+          ..write('tentId: $tentId, ')
+          ..write('phoneNum: $phoneNum, ')
+          ..write('nameEng: $nameEng, ')
+          ..write('peopleCount: $peopleCount, ')
+          ..write('womenCount: $womenCount, ')
+          ..write('childrenCount: $childrenCount, ')
+          ..write('casesCount: $casesCount')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $FamilysTable extends Familys with TableInfo<$FamilysTable, Family> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FamilysTable(this.attachedDatabase, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int?> id = GeneratedColumn<int?>(
+      'id', aliasedName, false,
+      type: const IntType(),
+      requiredDuringInsert: false,
+      defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
+  final VerificationMeta _locationMeta = const VerificationMeta('location');
+  @override
+  late final GeneratedColumn<String?> location = GeneratedColumn<String?>(
+      'location', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 2, maxTextLength: 100),
+      type: const StringType(),
+      requiredDuringInsert: true);
+  final VerificationMeta _campIdMeta = const VerificationMeta('campId');
+  @override
+  late final GeneratedColumn<int?> campId = GeneratedColumn<int?>(
+      'camp_id', aliasedName, false,
+      type: const IntType(),
+      requiredDuringInsert: true,
+      $customConstraints: 'REFERENCES camps(id)');
+  final VerificationMeta _tentIdMeta = const VerificationMeta('tentId');
+  @override
+  late final GeneratedColumn<int?> tentId = GeneratedColumn<int?>(
+      'tent_id', aliasedName, false,
+      type: const IntType(),
+      requiredDuringInsert: true,
+      $customConstraints: 'REFERENCES tents(id)');
+  final VerificationMeta _phoneNumMeta = const VerificationMeta('phoneNum');
+  @override
+  late final GeneratedColumn<String?> phoneNum = GeneratedColumn<String?>(
+      'phone_num', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
+  final VerificationMeta _nameEngMeta = const VerificationMeta('nameEng');
+  @override
+  late final GeneratedColumn<String?> nameEng = GeneratedColumn<String?>(
+      'name_eng', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
+  final VerificationMeta _peopleCountMeta =
+      const VerificationMeta('peopleCount');
+  @override
+  late final GeneratedColumn<int?> peopleCount = GeneratedColumn<int?>(
+      'people_count', aliasedName, false,
+      type: const IntType(), requiredDuringInsert: true);
+  final VerificationMeta _womenCountMeta = const VerificationMeta('womenCount');
+  @override
+  late final GeneratedColumn<int?> womenCount = GeneratedColumn<int?>(
+      'women_count', aliasedName, false,
+      type: const IntType(), requiredDuringInsert: true);
+  final VerificationMeta _childrenCountMeta =
+      const VerificationMeta('childrenCount');
+  @override
+  late final GeneratedColumn<int?> childrenCount = GeneratedColumn<int?>(
+      'children_count', aliasedName, false,
+      type: const IntType(), requiredDuringInsert: true);
+  final VerificationMeta _casesCountMeta = const VerificationMeta('casesCount');
+  @override
+  late final GeneratedColumn<int?> casesCount = GeneratedColumn<int?>(
+      'cases_count', aliasedName, false,
+      type: const IntType(), requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        location,
+        campId,
+        tentId,
+        phoneNum,
+        nameEng,
+        peopleCount,
+        womenCount,
+        childrenCount,
+        casesCount
+      ];
+  @override
+  String get aliasedName => _alias ?? 'familys';
+  @override
+  String get actualTableName => 'familys';
+  @override
+  VerificationContext validateIntegrity(Insertable<Family> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('location')) {
+      context.handle(_locationMeta,
+          location.isAcceptableOrUnknown(data['location']!, _locationMeta));
+    } else if (isInserting) {
+      context.missing(_locationMeta);
+    }
+    if (data.containsKey('camp_id')) {
+      context.handle(_campIdMeta,
+          campId.isAcceptableOrUnknown(data['camp_id']!, _campIdMeta));
+    } else if (isInserting) {
+      context.missing(_campIdMeta);
+    }
+    if (data.containsKey('tent_id')) {
+      context.handle(_tentIdMeta,
+          tentId.isAcceptableOrUnknown(data['tent_id']!, _tentIdMeta));
+    } else if (isInserting) {
+      context.missing(_tentIdMeta);
+    }
+    if (data.containsKey('phone_num')) {
+      context.handle(_phoneNumMeta,
+          phoneNum.isAcceptableOrUnknown(data['phone_num']!, _phoneNumMeta));
+    } else if (isInserting) {
+      context.missing(_phoneNumMeta);
+    }
+    if (data.containsKey('name_eng')) {
+      context.handle(_nameEngMeta,
+          nameEng.isAcceptableOrUnknown(data['name_eng']!, _nameEngMeta));
+    } else if (isInserting) {
+      context.missing(_nameEngMeta);
+    }
+    if (data.containsKey('people_count')) {
+      context.handle(
+          _peopleCountMeta,
+          peopleCount.isAcceptableOrUnknown(
+              data['people_count']!, _peopleCountMeta));
+    } else if (isInserting) {
+      context.missing(_peopleCountMeta);
+    }
+    if (data.containsKey('women_count')) {
+      context.handle(
+          _womenCountMeta,
+          womenCount.isAcceptableOrUnknown(
+              data['women_count']!, _womenCountMeta));
+    } else if (isInserting) {
+      context.missing(_womenCountMeta);
+    }
+    if (data.containsKey('children_count')) {
+      context.handle(
+          _childrenCountMeta,
+          childrenCount.isAcceptableOrUnknown(
+              data['children_count']!, _childrenCountMeta));
+    } else if (isInserting) {
+      context.missing(_childrenCountMeta);
+    }
+    if (data.containsKey('cases_count')) {
+      context.handle(
+          _casesCountMeta,
+          casesCount.isAcceptableOrUnknown(
+              data['cases_count']!, _casesCountMeta));
+    } else if (isInserting) {
+      context.missing(_casesCountMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Family map(Map<String, dynamic> data, {String? tablePrefix}) {
+    return Family.fromData(data,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+  }
+
+  @override
+  $FamilysTable createAlias(String alias) {
+    return $FamilysTable(attachedDatabase, alias);
+  }
+}
+
 abstract class _$MyDatabase extends GeneratedDatabase {
   _$MyDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   late final $LocalAuthUsersTable localAuthUsers = $LocalAuthUsersTable(this);
   late final $LocalExcelDatasTable localExcelDatas =
       $LocalExcelDatasTable(this);
+  late final $CampsTable camps = $CampsTable(this);
+  late final $TentsTable tents = $TentsTable(this);
+  late final $FamilysTable familys = $FamilysTable(this);
   late final LocalAuthUserDao localAuthUserDao =
       LocalAuthUserDao(this as MyDatabase);
   late final LocalExcelDataDao localExcelDataDao =
       LocalExcelDataDao(this as MyDatabase);
+  late final CampDao campDao = CampDao(this as MyDatabase);
+  late final TentDao tentDao = TentDao(this as MyDatabase);
+  late final FamilyDao familyDao = FamilyDao(this as MyDatabase);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [localAuthUsers, localExcelDatas];
+      [localAuthUsers, localExcelDatas, camps, tents, familys];
 }
 
 // **************************************************************************
 // DaoGenerator
 // **************************************************************************
 
+mixin _$TentDaoMixin on DatabaseAccessor<MyDatabase> {
+  $TentsTable get tents => attachedDatabase.tents;
+  $CampsTable get camps => attachedDatabase.camps;
+}
 mixin _$LocalExcelDataDaoMixin on DatabaseAccessor<MyDatabase> {
   $LocalExcelDatasTable get localExcelDatas => attachedDatabase.localExcelDatas;
 }
@@ -578,4 +1421,10 @@ mixin _$LocalAuthUserDaoMixin on DatabaseAccessor<MyDatabase> {
           localAuthUsers,
         }).map(localAuthUsers.mapFromRow);
   }
+}
+mixin _$CampDaoMixin on DatabaseAccessor<MyDatabase> {
+  $CampsTable get camps => attachedDatabase.camps;
+}
+mixin _$FamilyDaoMixin on DatabaseAccessor<MyDatabase> {
+  $FamilysTable get familys => attachedDatabase.familys;
 }
