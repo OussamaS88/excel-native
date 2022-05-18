@@ -14,17 +14,25 @@ part 'drift_local_excel_data.dart';
 part 'drift_local_auth_users.dart';
 part 'drift_camp.dart';
 part 'drift_family.dart';
+part 'drift_location.dart';
 
-class TentsWithCamps{
+class TentsWithCamps {
   final Tent tent;
   final Camp camp;
 
   TentsWithCamps({required this.tent, required this.camp});
 }
 
+class CampsWithLocations {
+  final Camp camp;
+  final Location location;
+
+  CampsWithLocations({required this.location, required this.camp});
+}
+
 @DriftDatabase(
-    tables: [LocalAuthUsers, LocalExcelDatas, Camps, Tents, Familys],
-    daos: [LocalAuthUserDao, LocalExcelDataDao, CampDao, TentDao, FamilyDao])
+    tables: [LocalAuthUsers, LocalExcelDatas, Camps, Tents, Familys, Locations],
+    daos: [LocalAuthUserDao, LocalExcelDataDao, CampDao, TentDao, FamilyDao, LocationDao])
 class MyDatabase extends _$MyDatabase {
   // we tell the database where to store the data with this constructor
   MyDatabase() : super(_openConnection());
@@ -49,6 +57,7 @@ LazyDatabase _openConnection() {
     final file = File(p.join(pathToExe, 'config'));
     if (!await file.exists()) {
       // Extract the pre-populated database file from assets
+      // final blob = await rootBundle.load('assets/db.sqliteV2');
       final blob = await rootBundle.load('assets/OLDdb.sqlite');
       final buffer = blob.buffer;
       await file.writeAsBytes(

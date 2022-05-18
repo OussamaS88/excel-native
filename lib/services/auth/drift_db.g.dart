@@ -548,7 +548,8 @@ class $LocalExcelDatasTable extends LocalExcelDatas
 class Camp extends DataClass implements Insertable<Camp> {
   final int id;
   final String location;
-  Camp({required this.id, required this.location});
+  final String name;
+  Camp({required this.id, required this.location, required this.name});
   factory Camp.fromData(Map<String, dynamic> data, {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return Camp(
@@ -556,6 +557,8 @@ class Camp extends DataClass implements Insertable<Camp> {
           .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       location: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}location'])!,
+      name: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}name'])!,
     );
   }
   @override
@@ -563,6 +566,7 @@ class Camp extends DataClass implements Insertable<Camp> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['location'] = Variable<String>(location);
+    map['name'] = Variable<String>(name);
     return map;
   }
 
@@ -570,6 +574,7 @@ class Camp extends DataClass implements Insertable<Camp> {
     return CampsCompanion(
       id: Value(id),
       location: Value(location),
+      name: Value(name),
     );
   }
 
@@ -579,6 +584,7 @@ class Camp extends DataClass implements Insertable<Camp> {
     return Camp(
       id: serializer.fromJson<int>(json['id']),
       location: serializer.fromJson<String>(json['location']),
+      name: serializer.fromJson<String>(json['name']),
     );
   }
   @override
@@ -587,55 +593,69 @@ class Camp extends DataClass implements Insertable<Camp> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'location': serializer.toJson<String>(location),
+      'name': serializer.toJson<String>(name),
     };
   }
 
-  Camp copyWith({int? id, String? location}) => Camp(
+  Camp copyWith({int? id, String? location, String? name}) => Camp(
         id: id ?? this.id,
         location: location ?? this.location,
+        name: name ?? this.name,
       );
   @override
   String toString() {
     return (StringBuffer('Camp(')
           ..write('id: $id, ')
-          ..write('location: $location')
+          ..write('location: $location, ')
+          ..write('name: $name')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, location);
+  int get hashCode => Object.hash(id, location, name);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Camp && other.id == this.id && other.location == this.location);
+      (other is Camp &&
+          other.id == this.id &&
+          other.location == this.location &&
+          other.name == this.name);
 }
 
 class CampsCompanion extends UpdateCompanion<Camp> {
   final Value<int> id;
   final Value<String> location;
+  final Value<String> name;
   const CampsCompanion({
     this.id = const Value.absent(),
     this.location = const Value.absent(),
+    this.name = const Value.absent(),
   });
   CampsCompanion.insert({
     this.id = const Value.absent(),
     required String location,
-  }) : location = Value(location);
+    required String name,
+  })  : location = Value(location),
+        name = Value(name);
   static Insertable<Camp> custom({
     Expression<int>? id,
     Expression<String>? location,
+    Expression<String>? name,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (location != null) 'location': location,
+      if (name != null) 'name': name,
     });
   }
 
-  CampsCompanion copyWith({Value<int>? id, Value<String>? location}) {
+  CampsCompanion copyWith(
+      {Value<int>? id, Value<String>? location, Value<String>? name}) {
     return CampsCompanion(
       id: id ?? this.id,
       location: location ?? this.location,
+      name: name ?? this.name,
     );
   }
 
@@ -648,6 +668,9 @@ class CampsCompanion extends UpdateCompanion<Camp> {
     if (location.present) {
       map['location'] = Variable<String>(location.value);
     }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
     return map;
   }
 
@@ -655,7 +678,8 @@ class CampsCompanion extends UpdateCompanion<Camp> {
   String toString() {
     return (StringBuffer('CampsCompanion(')
           ..write('id: $id, ')
-          ..write('location: $location')
+          ..write('location: $location, ')
+          ..write('name: $name')
           ..write(')'))
         .toString();
   }
@@ -680,9 +704,18 @@ class $CampsTable extends Camps with TableInfo<$CampsTable, Camp> {
       additionalChecks:
           GeneratedColumn.checkTextLength(minTextLength: 2, maxTextLength: 100),
       type: const StringType(),
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL REFERENCES locations (name)');
+  final VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String?> name = GeneratedColumn<String?>(
+      'name', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 2, maxTextLength: 100),
+      type: const StringType(),
       requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [id, location];
+  List<GeneratedColumn> get $columns => [id, location, name];
   @override
   String get aliasedName => _alias ?? 'camps';
   @override
@@ -700,6 +733,12 @@ class $CampsTable extends Camps with TableInfo<$CampsTable, Camp> {
           location.isAcceptableOrUnknown(data['location']!, _locationMeta));
     } else if (isInserting) {
       context.missing(_locationMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
     }
     return context;
   }
@@ -1378,6 +1417,151 @@ class $FamilysTable extends Familys with TableInfo<$FamilysTable, Family> {
   }
 }
 
+class Location extends DataClass implements Insertable<Location> {
+  final String location;
+  Location({required this.location});
+  factory Location.fromData(Map<String, dynamic> data, {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    return Location(
+      location: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}location'])!,
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['location'] = Variable<String>(location);
+    return map;
+  }
+
+  LocationsCompanion toCompanion(bool nullToAbsent) {
+    return LocationsCompanion(
+      location: Value(location),
+    );
+  }
+
+  factory Location.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Location(
+      location: serializer.fromJson<String>(json['location']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'location': serializer.toJson<String>(location),
+    };
+  }
+
+  Location copyWith({String? location}) => Location(
+        location: location ?? this.location,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Location(')
+          ..write('location: $location')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => location.hashCode;
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Location && other.location == this.location);
+}
+
+class LocationsCompanion extends UpdateCompanion<Location> {
+  final Value<String> location;
+  const LocationsCompanion({
+    this.location = const Value.absent(),
+  });
+  LocationsCompanion.insert({
+    required String location,
+  }) : location = Value(location);
+  static Insertable<Location> custom({
+    Expression<String>? location,
+  }) {
+    return RawValuesInsertable({
+      if (location != null) 'location': location,
+    });
+  }
+
+  LocationsCompanion copyWith({Value<String>? location}) {
+    return LocationsCompanion(
+      location: location ?? this.location,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (location.present) {
+      map['location'] = Variable<String>(location.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LocationsCompanion(')
+          ..write('location: $location')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $LocationsTable extends Locations
+    with TableInfo<$LocationsTable, Location> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LocationsTable(this.attachedDatabase, [this._alias]);
+  final VerificationMeta _locationMeta = const VerificationMeta('location');
+  @override
+  late final GeneratedColumn<String?> location = GeneratedColumn<String?>(
+      'location', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 2, maxTextLength: 100),
+      type: const StringType(),
+      requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [location];
+  @override
+  String get aliasedName => _alias ?? 'locations';
+  @override
+  String get actualTableName => 'locations';
+  @override
+  VerificationContext validateIntegrity(Insertable<Location> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('location')) {
+      context.handle(_locationMeta,
+          location.isAcceptableOrUnknown(data['location']!, _locationMeta));
+    } else if (isInserting) {
+      context.missing(_locationMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {location};
+  @override
+  Location map(Map<String, dynamic> data, {String? tablePrefix}) {
+    return Location.fromData(data,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+  }
+
+  @override
+  $LocationsTable createAlias(String alias) {
+    return $LocationsTable(attachedDatabase, alias);
+  }
+}
+
 abstract class _$MyDatabase extends GeneratedDatabase {
   _$MyDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   late final $LocalAuthUsersTable localAuthUsers = $LocalAuthUsersTable(this);
@@ -1386,6 +1570,7 @@ abstract class _$MyDatabase extends GeneratedDatabase {
   late final $CampsTable camps = $CampsTable(this);
   late final $TentsTable tents = $TentsTable(this);
   late final $FamilysTable familys = $FamilysTable(this);
+  late final $LocationsTable locations = $LocationsTable(this);
   late final LocalAuthUserDao localAuthUserDao =
       LocalAuthUserDao(this as MyDatabase);
   late final LocalExcelDataDao localExcelDataDao =
@@ -1393,11 +1578,12 @@ abstract class _$MyDatabase extends GeneratedDatabase {
   late final CampDao campDao = CampDao(this as MyDatabase);
   late final TentDao tentDao = TentDao(this as MyDatabase);
   late final FamilyDao familyDao = FamilyDao(this as MyDatabase);
+  late final LocationDao locationDao = LocationDao(this as MyDatabase);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [localAuthUsers, localExcelDatas, camps, tents, familys];
+      [localAuthUsers, localExcelDatas, camps, tents, familys, locations];
 }
 
 // **************************************************************************
@@ -1424,7 +1610,11 @@ mixin _$LocalAuthUserDaoMixin on DatabaseAccessor<MyDatabase> {
 }
 mixin _$CampDaoMixin on DatabaseAccessor<MyDatabase> {
   $CampsTable get camps => attachedDatabase.camps;
+  $LocationsTable get locations => attachedDatabase.locations;
 }
 mixin _$FamilyDaoMixin on DatabaseAccessor<MyDatabase> {
   $FamilysTable get familys => attachedDatabase.familys;
+}
+mixin _$LocationDaoMixin on DatabaseAccessor<MyDatabase> {
+  $LocationsTable get locations => attachedDatabase.locations;
 }

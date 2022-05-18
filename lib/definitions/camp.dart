@@ -16,5 +16,5 @@ class CampLocalData extends Equatable {
     );
   }
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [campId, location];
 }

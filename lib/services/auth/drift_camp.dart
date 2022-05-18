@@ -1,15 +1,26 @@
 part of './drift_db.dart';
 
-
 class Camps extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get location => text().withLength(min: 2, max: 100)();
+  TextColumn get location => text()
+      .customConstraint('NOT NULL REFERENCES locations (name)')
+      .withLength(min: 2, max: 100)();
+  TextColumn get name => text().withLength(min: 2, max: 100)();
 }
 
-@DriftAccessor(tables: [Camps])
+@DriftAccessor(tables: [Camps, Locations])
 class CampDao extends DatabaseAccessor<MyDatabase> with _$CampDaoMixin {
   final MyDatabase db;
   CampDao(this.db) : super(db);
+
+  
+  Future<List<CampsWithLocations>> getAllCampsWithLocations() => (select(camps))
+      .join([leftOuterJoin(locations, camps.id.equalsExp(camps.id))])
+      .get()
+      .then((value) => value.map((e) => CampsWithLocations(
+          camp: e.readTable(camps),
+          location: e.readTable(locations))).toList());
+
   Future insertCamp(CampsCompanion campsCompanion) =>
       into(camps).insert(campsCompanion, mode: InsertMode.insertOrIgnore);
 
@@ -21,4 +32,7 @@ class CampDao extends DatabaseAccessor<MyDatabase> with _$CampDaoMixin {
           .getSingleOrNull();
 
   Future<List<Camp>> getAllCamps() => select(camps).get();
+  Future getCampsGroupByLocation() {
+    return (select(camps)).get();
+  }
 }
