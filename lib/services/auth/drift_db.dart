@@ -15,6 +15,7 @@ part 'drift_local_auth_users.dart';
 part 'drift_camp.dart';
 part 'drift_family.dart';
 part 'drift_location.dart';
+part 'drift_region.dart';
 
 class TentsWithCamps {
   final Tent tent;
@@ -30,9 +31,23 @@ class CampsWithLocations {
   CampsWithLocations({required this.location, required this.camp});
 }
 
-@DriftDatabase(
-    tables: [LocalAuthUsers, LocalExcelDatas, Camps, Tents, Familys, Locations],
-    daos: [LocalAuthUserDao, LocalExcelDataDao, CampDao, TentDao, FamilyDao, LocationDao])
+@DriftDatabase(tables: [
+  LocalAuthUsers,
+  LocalExcelDatas,
+  Camps,
+  Tents,
+  Familys,
+  Locations,
+  Regions
+], daos: [
+  LocalAuthUserDao,
+  LocalExcelDataDao,
+  CampDao,
+  TentDao,
+  FamilyDao,
+  LocationDao,
+  RegionDao
+])
 class MyDatabase extends _$MyDatabase {
   // we tell the database where to store the data with this constructor
   MyDatabase() : super(_openConnection());

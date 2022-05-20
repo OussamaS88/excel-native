@@ -10,4 +10,8 @@ class Locations extends Table {
 class LocationDao extends DatabaseAccessor<MyDatabase> with _$LocationDaoMixin {
   final MyDatabase db;
   LocationDao(this.db) : super(db);
+
+  Future<List<Location>> getAllLocations() => select(locations).get();
+  Future createLocation(LocationsCompanion locationsCompanion) =>
+      into(locations).insert(locationsCompanion);
 }

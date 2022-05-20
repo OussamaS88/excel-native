@@ -548,8 +548,13 @@ class $LocalExcelDatasTable extends LocalExcelDatas
 class Camp extends DataClass implements Insertable<Camp> {
   final int id;
   final String location;
+  final String region;
   final String name;
-  Camp({required this.id, required this.location, required this.name});
+  Camp(
+      {required this.id,
+      required this.location,
+      required this.region,
+      required this.name});
   factory Camp.fromData(Map<String, dynamic> data, {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return Camp(
@@ -557,6 +562,8 @@ class Camp extends DataClass implements Insertable<Camp> {
           .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       location: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}location'])!,
+      region: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}region'])!,
       name: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}name'])!,
     );
@@ -566,6 +573,7 @@ class Camp extends DataClass implements Insertable<Camp> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['location'] = Variable<String>(location);
+    map['region'] = Variable<String>(region);
     map['name'] = Variable<String>(name);
     return map;
   }
@@ -574,6 +582,7 @@ class Camp extends DataClass implements Insertable<Camp> {
     return CampsCompanion(
       id: Value(id),
       location: Value(location),
+      region: Value(region),
       name: Value(name),
     );
   }
@@ -584,6 +593,7 @@ class Camp extends DataClass implements Insertable<Camp> {
     return Camp(
       id: serializer.fromJson<int>(json['id']),
       location: serializer.fromJson<String>(json['location']),
+      region: serializer.fromJson<String>(json['region']),
       name: serializer.fromJson<String>(json['name']),
     );
   }
@@ -593,13 +603,16 @@ class Camp extends DataClass implements Insertable<Camp> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'location': serializer.toJson<String>(location),
+      'region': serializer.toJson<String>(region),
       'name': serializer.toJson<String>(name),
     };
   }
 
-  Camp copyWith({int? id, String? location, String? name}) => Camp(
+  Camp copyWith({int? id, String? location, String? region, String? name}) =>
+      Camp(
         id: id ?? this.id,
         location: location ?? this.location,
+        region: region ?? this.region,
         name: name ?? this.name,
       );
   @override
@@ -607,54 +620,66 @@ class Camp extends DataClass implements Insertable<Camp> {
     return (StringBuffer('Camp(')
           ..write('id: $id, ')
           ..write('location: $location, ')
+          ..write('region: $region, ')
           ..write('name: $name')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, location, name);
+  int get hashCode => Object.hash(id, location, region, name);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Camp &&
           other.id == this.id &&
           other.location == this.location &&
+          other.region == this.region &&
           other.name == this.name);
 }
 
 class CampsCompanion extends UpdateCompanion<Camp> {
   final Value<int> id;
   final Value<String> location;
+  final Value<String> region;
   final Value<String> name;
   const CampsCompanion({
     this.id = const Value.absent(),
     this.location = const Value.absent(),
+    this.region = const Value.absent(),
     this.name = const Value.absent(),
   });
   CampsCompanion.insert({
     this.id = const Value.absent(),
     required String location,
+    required String region,
     required String name,
   })  : location = Value(location),
+        region = Value(region),
         name = Value(name);
   static Insertable<Camp> custom({
     Expression<int>? id,
     Expression<String>? location,
+    Expression<String>? region,
     Expression<String>? name,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (location != null) 'location': location,
+      if (region != null) 'region': region,
       if (name != null) 'name': name,
     });
   }
 
   CampsCompanion copyWith(
-      {Value<int>? id, Value<String>? location, Value<String>? name}) {
+      {Value<int>? id,
+      Value<String>? location,
+      Value<String>? region,
+      Value<String>? name}) {
     return CampsCompanion(
       id: id ?? this.id,
       location: location ?? this.location,
+      region: region ?? this.region,
       name: name ?? this.name,
     );
   }
@@ -668,6 +693,9 @@ class CampsCompanion extends UpdateCompanion<Camp> {
     if (location.present) {
       map['location'] = Variable<String>(location.value);
     }
+    if (region.present) {
+      map['region'] = Variable<String>(region.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
@@ -679,6 +707,7 @@ class CampsCompanion extends UpdateCompanion<Camp> {
     return (StringBuffer('CampsCompanion(')
           ..write('id: $id, ')
           ..write('location: $location, ')
+          ..write('region: $region, ')
           ..write('name: $name')
           ..write(')'))
         .toString();
@@ -705,7 +734,16 @@ class $CampsTable extends Camps with TableInfo<$CampsTable, Camp> {
           GeneratedColumn.checkTextLength(minTextLength: 2, maxTextLength: 100),
       type: const StringType(),
       requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL REFERENCES locations (name)');
+      $customConstraints: 'NOT NULL REFERENCES locations (location)');
+  final VerificationMeta _regionMeta = const VerificationMeta('region');
+  @override
+  late final GeneratedColumn<String?> region = GeneratedColumn<String?>(
+      'region', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 2, maxTextLength: 100),
+      type: const StringType(),
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL REFERENCES regions (region)');
   final VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String?> name = GeneratedColumn<String?>(
@@ -715,7 +753,7 @@ class $CampsTable extends Camps with TableInfo<$CampsTable, Camp> {
       type: const StringType(),
       requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [id, location, name];
+  List<GeneratedColumn> get $columns => [id, location, region, name];
   @override
   String get aliasedName => _alias ?? 'camps';
   @override
@@ -733,6 +771,12 @@ class $CampsTable extends Camps with TableInfo<$CampsTable, Camp> {
           location.isAcceptableOrUnknown(data['location']!, _locationMeta));
     } else if (isInserting) {
       context.missing(_locationMeta);
+    }
+    if (data.containsKey('region')) {
+      context.handle(_regionMeta,
+          region.isAcceptableOrUnknown(data['region']!, _regionMeta));
+    } else if (isInserting) {
+      context.missing(_regionMeta);
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -1562,6 +1606,187 @@ class $LocationsTable extends Locations
   }
 }
 
+class Region extends DataClass implements Insertable<Region> {
+  final String region;
+  final String location;
+  Region({required this.region, required this.location});
+  factory Region.fromData(Map<String, dynamic> data, {String? prefix}) {
+    final effectivePrefix = prefix ?? '';
+    return Region(
+      region: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}region'])!,
+      location: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}location'])!,
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['region'] = Variable<String>(region);
+    map['location'] = Variable<String>(location);
+    return map;
+  }
+
+  RegionsCompanion toCompanion(bool nullToAbsent) {
+    return RegionsCompanion(
+      region: Value(region),
+      location: Value(location),
+    );
+  }
+
+  factory Region.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Region(
+      region: serializer.fromJson<String>(json['region']),
+      location: serializer.fromJson<String>(json['location']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'region': serializer.toJson<String>(region),
+      'location': serializer.toJson<String>(location),
+    };
+  }
+
+  Region copyWith({String? region, String? location}) => Region(
+        region: region ?? this.region,
+        location: location ?? this.location,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Region(')
+          ..write('region: $region, ')
+          ..write('location: $location')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(region, location);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Region &&
+          other.region == this.region &&
+          other.location == this.location);
+}
+
+class RegionsCompanion extends UpdateCompanion<Region> {
+  final Value<String> region;
+  final Value<String> location;
+  const RegionsCompanion({
+    this.region = const Value.absent(),
+    this.location = const Value.absent(),
+  });
+  RegionsCompanion.insert({
+    required String region,
+    required String location,
+  })  : region = Value(region),
+        location = Value(location);
+  static Insertable<Region> custom({
+    Expression<String>? region,
+    Expression<String>? location,
+  }) {
+    return RawValuesInsertable({
+      if (region != null) 'region': region,
+      if (location != null) 'location': location,
+    });
+  }
+
+  RegionsCompanion copyWith({Value<String>? region, Value<String>? location}) {
+    return RegionsCompanion(
+      region: region ?? this.region,
+      location: location ?? this.location,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (region.present) {
+      map['region'] = Variable<String>(region.value);
+    }
+    if (location.present) {
+      map['location'] = Variable<String>(location.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RegionsCompanion(')
+          ..write('region: $region, ')
+          ..write('location: $location')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $RegionsTable extends Regions with TableInfo<$RegionsTable, Region> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RegionsTable(this.attachedDatabase, [this._alias]);
+  final VerificationMeta _regionMeta = const VerificationMeta('region');
+  @override
+  late final GeneratedColumn<String?> region = GeneratedColumn<String?>(
+      'region', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 2, maxTextLength: 100),
+      type: const StringType(),
+      requiredDuringInsert: true);
+  final VerificationMeta _locationMeta = const VerificationMeta('location');
+  @override
+  late final GeneratedColumn<String?> location = GeneratedColumn<String?>(
+      'location', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 2, maxTextLength: 100),
+      type: const StringType(),
+      requiredDuringInsert: true,
+      $customConstraints: 'NOT NULL REFERENCES locations (location)');
+  @override
+  List<GeneratedColumn> get $columns => [region, location];
+  @override
+  String get aliasedName => _alias ?? 'regions';
+  @override
+  String get actualTableName => 'regions';
+  @override
+  VerificationContext validateIntegrity(Insertable<Region> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('region')) {
+      context.handle(_regionMeta,
+          region.isAcceptableOrUnknown(data['region']!, _regionMeta));
+    } else if (isInserting) {
+      context.missing(_regionMeta);
+    }
+    if (data.containsKey('location')) {
+      context.handle(_locationMeta,
+          location.isAcceptableOrUnknown(data['location']!, _locationMeta));
+    } else if (isInserting) {
+      context.missing(_locationMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {region};
+  @override
+  Region map(Map<String, dynamic> data, {String? tablePrefix}) {
+    return Region.fromData(data,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+  }
+
+  @override
+  $RegionsTable createAlias(String alias) {
+    return $RegionsTable(attachedDatabase, alias);
+  }
+}
+
 abstract class _$MyDatabase extends GeneratedDatabase {
   _$MyDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   late final $LocalAuthUsersTable localAuthUsers = $LocalAuthUsersTable(this);
@@ -1571,6 +1796,7 @@ abstract class _$MyDatabase extends GeneratedDatabase {
   late final $TentsTable tents = $TentsTable(this);
   late final $FamilysTable familys = $FamilysTable(this);
   late final $LocationsTable locations = $LocationsTable(this);
+  late final $RegionsTable regions = $RegionsTable(this);
   late final LocalAuthUserDao localAuthUserDao =
       LocalAuthUserDao(this as MyDatabase);
   late final LocalExcelDataDao localExcelDataDao =
@@ -1579,11 +1805,19 @@ abstract class _$MyDatabase extends GeneratedDatabase {
   late final TentDao tentDao = TentDao(this as MyDatabase);
   late final FamilyDao familyDao = FamilyDao(this as MyDatabase);
   late final LocationDao locationDao = LocationDao(this as MyDatabase);
+  late final RegionDao regionDao = RegionDao(this as MyDatabase);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [localAuthUsers, localExcelDatas, camps, tents, familys, locations];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        localAuthUsers,
+        localExcelDatas,
+        camps,
+        tents,
+        familys,
+        locations,
+        regions
+      ];
 }
 
 // **************************************************************************
@@ -1611,10 +1845,14 @@ mixin _$LocalAuthUserDaoMixin on DatabaseAccessor<MyDatabase> {
 mixin _$CampDaoMixin on DatabaseAccessor<MyDatabase> {
   $CampsTable get camps => attachedDatabase.camps;
   $LocationsTable get locations => attachedDatabase.locations;
+  $RegionsTable get regions => attachedDatabase.regions;
 }
 mixin _$FamilyDaoMixin on DatabaseAccessor<MyDatabase> {
   $FamilysTable get familys => attachedDatabase.familys;
 }
 mixin _$LocationDaoMixin on DatabaseAccessor<MyDatabase> {
   $LocationsTable get locations => attachedDatabase.locations;
+}
+mixin _$RegionDaoMixin on DatabaseAccessor<MyDatabase> {
+  $RegionsTable get regions => attachedDatabase.regions;
 }
