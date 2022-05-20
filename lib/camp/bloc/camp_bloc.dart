@@ -21,7 +21,9 @@ class CampBloc extends Bloc<CampEvent, CampState> {
     on<GetAllCampsWithLocationsCampEvent>(_getAllCampsWithLocationsCampEvent);
     on<CreateLocationCampEvent>(_createLocationCampEvent);
     on<CreateRegionFromLocationCampEvent>(_createRegionFromLocationCampEvent);
+    on<WatchAllLocationsCampEvent>(_watchAllLocationsCampEvent);
     add(const GetAllLocationsCampEvent());
+    // add(const WatchAllLocationsCampEvent());
   }
 
   FutureOr<void> _getAllCampsCampEvent(
@@ -49,19 +51,14 @@ class CampBloc extends Bloc<CampEvent, CampState> {
 
   FutureOr<void> _getAllLocationsCampEvent(
       GetAllLocationsCampEvent event, Emitter<CampState> emit) async {
+    print("getting locations...");
     if (state.campStatus != CampStatus.ready) {
+      print("process already in course...");
       return null;
     }
     emit(state.copyWith(campStatus: CampStatus.loading));
     var dao = db.locationDao;
     List<Location> l = await dao.getAllLocations();
-    // var dao2 = db.campDao;
-    // Map<Location, List<Camp>> m =
-    //     Map<Location, List<Camp>>.from(state.campsWithLocations!);
-    // for (var element in l) {
-    //   var k = await dao2.getAllCampsFromLocation(pLocation: element.location);
-    //   m[element] = k;
-    // }
     var regionDao = db.regionDao;
     Map<Location, List<Region>> m =
         Map<Location, List<Region>>.from(state.regionsWithLocations!);
@@ -73,6 +70,32 @@ class CampBloc extends Bloc<CampEvent, CampState> {
     emit(state.copyWith(
       campStatus: CampStatus.ready,
       locationsList: l,
+      regionsWithLocations: m,
+    ));
+    print("done getting locations.");
+  }
+
+  FutureOr<void> _watchAllLocationsCampEvent(
+      WatchAllLocationsCampEvent event, Emitter<CampState> emit) async {
+    if (state.campStatus != CampStatus.ready) {
+      return null;
+    }
+    emit(state.copyWith(campStatus: CampStatus.loading));
+    var dao = db.locationDao;
+    Stream<List<Location>> l = dao.watchAllLocations();
+
+    var regionDao = db.regionDao;
+    Map<Location, List<Region>> m =
+        Map<Location, List<Region>>.from(state.regionsWithLocations!);
+    var arr = await l.first;
+    for (var element in arr) {
+      var k =
+          regionDao.watchAllRegionsFromLocation(pLocation: element.location);
+      m[element] = await k.first;
+    }
+    emit(state.copyWith(
+      campStatus: CampStatus.ready,
+      locationsList: arr,
       regionsWithLocations: m,
     ));
   }
@@ -97,7 +120,7 @@ class CampBloc extends Bloc<CampEvent, CampState> {
     emit(state.copyWith(campStatus: CampStatus.loading));
     var dao = db.locationDao;
     await dao
-        .createLocation(const LocationsCompanion(location: Value("newLoc")));
+        .createLocation(LocationsCompanion(location: Value(event.location)));
     emit(state.copyWith(campStatus: CampStatus.ready));
   }
 
@@ -110,7 +133,7 @@ class CampBloc extends Bloc<CampEvent, CampState> {
     var dao = db.regionDao;
     await dao.insertRegion(
         regionsCompanion: RegionsCompanion(
-            region: Value("new_region"),
+            region: Value(event.newRegion),
             location: Value(event.location.location)));
 
     emit(state.copyWith(campStatus: CampStatus.ready));

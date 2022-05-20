@@ -1,3 +1,4 @@
+import 'package:excel_native/detailed_camp/detailed_camp.dart';
 import 'package:excel_native/services/auth/drift_db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,8 +25,84 @@ class _CampPageState extends State<CampPage> {
               child: const Text("Refresh")),
           ElevatedButton(
               onPressed: () {
-                // context.read<CampBloc>().add(const CreateCampCampEvent());
-                context.read<CampBloc>().add(const CreateLocationCampEvent());
+                context
+                    .read<CampBloc>()
+                    .add(const WatchAllLocationsCampEvent());
+              },
+              child: const Text("Stream")),
+          ElevatedButton(
+              onPressed: () async {
+                CampBloc cB = BlocProvider.of<CampBloc>(context);
+                // bool? hasSavedValue = await showDialog<bool>(
+                String? hasSavedValue = await showDialog<String>(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (_) {
+                    var t = TextEditingController();
+                    // return BlocProvider(
+                    //   create: (context) => cB,
+                    //   child:
+                    return AlertDialog(
+                      actionsAlignment: MainAxisAlignment.spaceEvenly,
+                      title: const Text("Add location}"),
+                      content: TextFormField(
+                        controller: t,
+                        autofocus: true,
+                        decoration: InputDecoration(
+                          filled: true,
+                          hintText: "Location...",
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              t.text = '';
+                            },
+                            icon: const Icon(Icons.delete),
+                          ),
+                        ),
+                      ),
+                      actions: [
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            if (t.text.length < 3) {
+                              return;
+                            }
+                            // BlocProvider.of<CampBloc>(context).add(
+                            //     CreateLocationCampEvent(location: t.text));
+
+                            Navigator.of(context, rootNavigator: true)
+                                .pop(t.text);
+                          },
+                          icon: const Icon(Icons.add),
+                          label: const Text("Add"),
+                        ),
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(primary: Colors.red),
+                          onPressed: () {
+                            Navigator.of(context, rootNavigator: true)
+                                .pop(null);
+                            t.dispose();
+                          },
+                          icon: const Icon(Icons.delete),
+                          label: const Text("Discard"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+                if (hasSavedValue == null || hasSavedValue.isEmpty) {
+                  return;
+                } else {
+                  print("has value, $hasSavedValue");
+                  BlocProvider.of<CampBloc>(context).add(
+                    CreateLocationCampEvent(location: hasSavedValue),
+                  );
+
+                  print("added");
+                  Future.delayed(const Duration(milliseconds: 500), () {
+                    BlocProvider.of<CampBloc>(context)
+                        .add(const GetAllLocationsCampEvent());
+                  });
+                  print("over");
+                }
               },
               child: const Text("Add")),
           ElevatedButton(
@@ -112,9 +189,14 @@ class LocationsGridView extends StatelessWidget {
                                     children: [
                                       IconButton(
                                           onPressed: () async {
-                                            await showDialog(
+                                            CampBloc cB =
+                                                BlocProvider.of<CampBloc>(
+                                                    context);
+                                            String? savedValue =
+                                                await showDialog<String>(
+                                              barrierDismissible: false,
                                               context: context,
-                                              builder: (context) {
+                                              builder: (_) {
                                                 var t = TextEditingController();
                                                 return AlertDialog(
                                                   actionsAlignment:
@@ -140,12 +222,27 @@ class LocationsGridView extends StatelessWidget {
                                                   actions: [
                                                     ElevatedButton.icon(
                                                       onPressed: () {
-                                                        context
-                                                            .read<CampBloc>()
-                                                            .add(
-                                                                CreateRegionFromLocationCampEvent(
-                                                                    location:
-                                                                        l[i]));
+                                                        if (t.text.length < 3) {
+                                                          return;
+                                                        }
+                                                        // BlocProvider.of<
+                                                        //             CampBloc>(
+                                                        //         context)
+                                                        //     .add(CreateRegionFromLocationCampEvent(
+                                                        //         newRegion:
+                                                        //             t.text,
+                                                        //         location:
+                                                        //             l[i]));
+
+                                                        Navigator.of(context,
+                                                                rootNavigator:
+                                                                    true)
+                                                            .pop(t.text);
+                                                        // BlocProvider.of<
+                                                        //             CampBloc>(
+                                                        //         context)
+                                                        //     .add(
+                                                        //         const GetAllLocationsCampEvent());
                                                       },
                                                       icon:
                                                           const Icon(Icons.add),
@@ -157,9 +254,11 @@ class LocationsGridView extends StatelessWidget {
                                                               primary:
                                                                   Colors.red),
                                                       onPressed: () {
+                                                        Navigator.of(context,
+                                                                rootNavigator:
+                                                                    true)
+                                                            .pop(null);
                                                         t.dispose();
-                                                        Navigator.of(context)
-                                                            .pop();
                                                       },
                                                       icon: const Icon(
                                                           Icons.delete),
@@ -170,6 +269,24 @@ class LocationsGridView extends StatelessWidget {
                                                 );
                                               },
                                             );
+                                            if (savedValue == null ||
+                                                savedValue.isEmpty) {
+                                              return;
+                                            } else {
+                                              BlocProvider.of<CampBloc>(context)
+                                                  .add(
+                                                      CreateRegionFromLocationCampEvent(
+                                                          newRegion: savedValue,
+                                                          location: l[i]));
+                                              Future.delayed(
+                                                  const Duration(
+                                                      milliseconds: 500), () {
+                                                BlocProvider.of<CampBloc>(
+                                                        context)
+                                                    .add(
+                                                        const GetAllLocationsCampEvent());
+                                              });
+                                            }
                                           },
                                           icon: const Icon(Icons.add)),
                                       IconButton(
@@ -184,14 +301,6 @@ class LocationsGridView extends StatelessWidget {
                               ),
                               BlocBuilder<CampBloc, CampState>(
                                 builder: (context, state) {
-                                  // if (state.campsWithLocations == {}) {
-                                  //   return const Text("no data");
-                                  // }
-                                  // List<Camp> k =
-                                  //     state.campsWithLocations![l[i]] ?? [];
-                                  // if (state.campsWithLocations![l[i]] == []) {
-                                  //   return const Text("no data");
-                                  // }
                                   if (state.regionsWithLocations == {}) {
                                     return const Text("no data");
                                   }
@@ -208,7 +317,16 @@ class LocationsGridView extends StatelessWidget {
                                           return Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: ElevatedButton(
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          DetailedCampView(
+                                                              region:
+                                                                  k[lIndex])),
+                                                );
+                                              },
                                               child: Text(k[lIndex].region),
                                             ),
                                           );

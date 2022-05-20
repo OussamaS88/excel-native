@@ -17,6 +17,10 @@ class RegionDao extends DatabaseAccessor<MyDatabase> with _$RegionDaoMixin {
   Future<List<Region>> getAllRegionsFromLocation({required String pLocation}) =>
       (select(regions)..where((tbl) => tbl.location.equals(pLocation))).get();
 
+      
+  Stream<List<Region>> watchAllRegionsFromLocation({required String pLocation}) =>
+      (select(regions)..where((tbl) => tbl.location.equals(pLocation))).watch();
+
   Future<List<Region>> getAllRegions() => select(regions).get();
 
   Future<int> insertRegion({required RegionsCompanion regionsCompanion}) =>

@@ -28,10 +28,17 @@ class GetAllCampsWithLocationsCampEvent extends CampEvent {
 }
 
 class CreateLocationCampEvent extends CampEvent {
-  const CreateLocationCampEvent();
+  final String location;
+  const CreateLocationCampEvent({required this.location});
 }
 
 class CreateRegionFromLocationCampEvent extends CampEvent {
   final Location location;
-  const CreateRegionFromLocationCampEvent({required this.location});
+  final String newRegion;
+  const CreateRegionFromLocationCampEvent(
+      {required this.location, required this.newRegion});
+}
+
+class WatchAllLocationsCampEvent extends CampEvent {
+  const WatchAllLocationsCampEvent();
 }

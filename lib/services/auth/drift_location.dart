@@ -12,6 +12,9 @@ class LocationDao extends DatabaseAccessor<MyDatabase> with _$LocationDaoMixin {
   LocationDao(this.db) : super(db);
 
   Future<List<Location>> getAllLocations() => select(locations).get();
+  
+  Stream<List<Location>> watchAllLocations() => select(locations).watch();
+
   Future createLocation(LocationsCompanion locationsCompanion) =>
       into(locations).insert(locationsCompanion);
 }
