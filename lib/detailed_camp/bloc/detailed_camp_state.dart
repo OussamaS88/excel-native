@@ -1,6 +1,36 @@
 part of 'detailed_camp_bloc.dart';
 
-@immutable
-abstract class DetailedCampState {}
+enum DCStatus {
+  error,
+  ready,
+  loading,
+}
 
-class DetailedCampInitial extends DetailedCampState {}
+class DetailedCampState extends Equatable {
+  final DCStatus dcStatus;
+  final List<Camp> campsList;
+  final Region region;
+
+  const DetailedCampState(
+      {required this.dcStatus,
+      this.campsList = const [],
+      required this.region});
+
+  DetailedCampState copyWith({
+    DCStatus? dcStatus,
+    List<Camp>? campsList,
+    Region? region,
+  }) {
+    return DetailedCampState(
+      dcStatus: dcStatus ?? this.dcStatus,
+      campsList: campsList ?? this.campsList,
+      region: region ?? this.region,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+        dcStatus,
+        campsList,
+      ];
+}

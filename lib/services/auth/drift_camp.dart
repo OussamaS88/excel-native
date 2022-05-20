@@ -39,6 +39,12 @@ class CampDao extends DatabaseAccessor<MyDatabase> with _$CampDaoMixin {
   Future<List<Camp>> getAllCampsFromLocation({required String pLocation}) =>
       (select(camps)..where((tbl) => tbl.location.equals(pLocation))).get();
 
+  Future<List<Camp>> getAllCampsFromRegion({required String pRegion}) =>
+      (select(camps)..where((tbl) => tbl.region.equals(pRegion))).get();
+
+  Stream<List<Camp>> watchAllCampsFromRegion({required String pRegion}) =>
+      (select(camps)..where((tbl) => tbl.region.equals(pRegion))).watch();
+
   Stream<List<Camp>> watchAllCampsFromLocation({required String pLocation}) =>
       (select(camps)..where((tbl) => tbl.location.equals(pLocation))).watch();
 }
