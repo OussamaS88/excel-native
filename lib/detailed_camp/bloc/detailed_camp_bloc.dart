@@ -22,6 +22,7 @@ class DetailedCampBloc extends Bloc<DetailedCampEvent, DetailedCampState> {
         _watchAllCampsFromRegionDetailedCampEvent);
     on<InsertCampsFromRegionDetailedCampEvent>(
         _insertCampsFromRegionDetailedCampEvent);
+    add(const WatchAllCampsFromRegionDetailedCampEvent());
   }
 
   FutureOr<void> _getAllCampsFromRegionDetailedCampEvent(
@@ -41,7 +42,7 @@ class DetailedCampBloc extends Bloc<DetailedCampEvent, DetailedCampState> {
     if (state.dcStatus != DCStatus.ready) return;
     emit(state.copyWith(dcStatus: DCStatus.loading));
     var dao = db.campDao;
-    emit.forEach(
+    await emit.forEach(
       dao.watchAllCampsFromRegion(pRegion: region.region),
       onData: (data) {
         return state.copyWith(

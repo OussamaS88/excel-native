@@ -18,21 +18,21 @@ class _CampPageState extends State<CampPage> {
       scrollDirection: Axis.vertical,
       child: Column(
         children: [
-          ElevatedButton(
-              onPressed: () {
-                context.read<CampBloc>().add(const GetAllLocationsCampEvent());
-              },
-              child: const Text("Refresh")),
-          ElevatedButton(
-              onPressed: () {
-                context
-                    .read<CampBloc>()
-                    .add(const WatchAllLocationsCampEvent());
-              },
-              child: const Text("Stream")),
+          // ElevatedButton(
+          //     onPressed: () {
+          //       context.read<CampBloc>().add(const GetAllLocationsCampEvent());
+          //     },
+          //     child: const Text("Refresh")),
+          // ElevatedButton(
+          //     onPressed: () {
+          //       context
+          //           .read<CampBloc>()
+          //           .add(const WatchAllLocationsCampEvent());
+          //     },
+          //     child: const Text("Stream")),
           ElevatedButton(
               onPressed: () async {
-                CampBloc cB = BlocProvider.of<CampBloc>(context);
+                // CampBloc cB = BlocProvider.of<CampBloc>(context);
                 // bool? hasSavedValue = await showDialog<bool>(
                 String? hasSavedValue = await showDialog<String>(
                   barrierDismissible: false,
@@ -44,7 +44,7 @@ class _CampPageState extends State<CampPage> {
                     //   child:
                     return AlertDialog(
                       actionsAlignment: MainAxisAlignment.spaceEvenly,
-                      title: const Text("Add location}"),
+                      title: const Text("Add location"),
                       content: TextFormField(
                         controller: t,
                         autofocus: true,
@@ -105,26 +105,26 @@ class _CampPageState extends State<CampPage> {
                 }
               },
               child: const Text("Add")),
-          ElevatedButton(
-              onPressed: () {
-                context.read<CampBloc>().add(const DebugCampEvent());
-              },
-              child: const Text("Debug")),
-          ElevatedButton(
-              onPressed: () {
-                print(context.read<CampBloc>().state);
-                print(context.read<CampBloc>().state.campsList);
-                print(context.read<CampBloc>().state.locationsList);
-                print(context.read<CampBloc>().state.regionsWithLocations);
-              },
-              child: const Text("print")),
-          ElevatedButton(
-              onPressed: () {
-                context
-                    .read<CampBloc>()
-                    .add(const GetAllCampsWithLocationsCampEvent());
-              },
-              child: const Text("try")),
+          // ElevatedButton(
+          //     onPressed: () {
+          //       context.read<CampBloc>().add(const DebugCampEvent());
+          //     },
+          //     child: const Text("Debug")),
+          // ElevatedButton(
+          //     onPressed: () {
+          //       print(context.read<CampBloc>().state);
+          //       print(context.read<CampBloc>().state.campsList);
+          //       print(context.read<CampBloc>().state.locationsList);
+          //       print(context.read<CampBloc>().state.regionsWithLocations);
+          //     },
+          //     child: const Text("print")),
+          // ElevatedButton(
+          //     onPressed: () {
+          //       context
+          //           .read<CampBloc>()
+          //           .add(const GetAllCampsWithLocationsCampEvent());
+          //     },
+          //     child: const Text("try")),
           const LocationsGridView(),
         ],
       ),
