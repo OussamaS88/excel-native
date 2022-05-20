@@ -1566,9 +1566,7 @@ class $FamilysTable extends Familys with TableInfo<$FamilysTable, Family> {
   @override
   late final GeneratedColumn<int?> tentId = GeneratedColumn<int?>(
       'tent_id', aliasedName, false,
-      type: const IntType(),
-      requiredDuringInsert: true,
-      $customConstraints: 'REFERENCES tents(id)');
+      type: const IntType(), requiredDuringInsert: true);
   final VerificationMeta _nameEngMeta = const VerificationMeta('nameEng');
   @override
   late final GeneratedColumn<String?> nameEng = GeneratedColumn<String?>(

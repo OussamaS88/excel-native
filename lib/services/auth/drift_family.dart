@@ -2,7 +2,7 @@ part of './drift_db.dart';
 
 class Familys extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get tentId => integer().customConstraint("REFERENCES tents(id)")();
+  IntColumn get tentId => integer()();
   TextColumn get nameEng => text()();
   TextColumn get nameAr => text()();
   TextColumn get phoneNum => text()();
