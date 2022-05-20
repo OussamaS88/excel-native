@@ -975,79 +975,139 @@ class $TentsTable extends Tents with TableInfo<$TentsTable, Tent> {
 
 class Family extends DataClass implements Insertable<Family> {
   final int id;
-  final String location;
-  final int campId;
   final int tentId;
-  final String phoneNum;
   final String nameEng;
+  final String nameAr;
+  final String phoneNum;
+  final String wfpAid;
+  final String unhcr;
   final int peopleCount;
   final int womenCount;
   final int childrenCount;
+  final int elderlyCount;
   final int casesCount;
+  final int educationCount;
+  final int employedCount;
+  final int unemployedCount;
+  final String notes1;
+  final String notes2;
+  final String location;
+  final String region;
+  final int campId;
   Family(
       {required this.id,
-      required this.location,
-      required this.campId,
       required this.tentId,
-      required this.phoneNum,
       required this.nameEng,
+      required this.nameAr,
+      required this.phoneNum,
+      required this.wfpAid,
+      required this.unhcr,
       required this.peopleCount,
       required this.womenCount,
       required this.childrenCount,
-      required this.casesCount});
+      required this.elderlyCount,
+      required this.casesCount,
+      required this.educationCount,
+      required this.employedCount,
+      required this.unemployedCount,
+      required this.notes1,
+      required this.notes2,
+      required this.location,
+      required this.region,
+      required this.campId});
   factory Family.fromData(Map<String, dynamic> data, {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return Family(
       id: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      location: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}location'])!,
-      campId: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}camp_id'])!,
       tentId: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}tent_id'])!,
-      phoneNum: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}phone_num'])!,
       nameEng: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}name_eng'])!,
+      nameAr: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}name_ar'])!,
+      phoneNum: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}phone_num'])!,
+      wfpAid: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}wfp_aid'])!,
+      unhcr: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}unhcr'])!,
       peopleCount: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}people_count'])!,
       womenCount: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}women_count'])!,
       childrenCount: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}children_count'])!,
+      elderlyCount: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}elderly_count'])!,
       casesCount: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}cases_count'])!,
+      educationCount: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}education_count'])!,
+      employedCount: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}employed_count'])!,
+      unemployedCount: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}unemployed_count'])!,
+      notes1: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}notes1'])!,
+      notes2: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}notes2'])!,
+      location: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}location'])!,
+      region: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}region'])!,
+      campId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}camp_id'])!,
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['location'] = Variable<String>(location);
-    map['camp_id'] = Variable<int>(campId);
     map['tent_id'] = Variable<int>(tentId);
-    map['phone_num'] = Variable<String>(phoneNum);
     map['name_eng'] = Variable<String>(nameEng);
+    map['name_ar'] = Variable<String>(nameAr);
+    map['phone_num'] = Variable<String>(phoneNum);
+    map['wfp_aid'] = Variable<String>(wfpAid);
+    map['unhcr'] = Variable<String>(unhcr);
     map['people_count'] = Variable<int>(peopleCount);
     map['women_count'] = Variable<int>(womenCount);
     map['children_count'] = Variable<int>(childrenCount);
+    map['elderly_count'] = Variable<int>(elderlyCount);
     map['cases_count'] = Variable<int>(casesCount);
+    map['education_count'] = Variable<int>(educationCount);
+    map['employed_count'] = Variable<int>(employedCount);
+    map['unemployed_count'] = Variable<int>(unemployedCount);
+    map['notes1'] = Variable<String>(notes1);
+    map['notes2'] = Variable<String>(notes2);
+    map['location'] = Variable<String>(location);
+    map['region'] = Variable<String>(region);
+    map['camp_id'] = Variable<int>(campId);
     return map;
   }
 
   FamilysCompanion toCompanion(bool nullToAbsent) {
     return FamilysCompanion(
       id: Value(id),
-      location: Value(location),
-      campId: Value(campId),
       tentId: Value(tentId),
-      phoneNum: Value(phoneNum),
       nameEng: Value(nameEng),
+      nameAr: Value(nameAr),
+      phoneNum: Value(phoneNum),
+      wfpAid: Value(wfpAid),
+      unhcr: Value(unhcr),
       peopleCount: Value(peopleCount),
       womenCount: Value(womenCount),
       childrenCount: Value(childrenCount),
+      elderlyCount: Value(elderlyCount),
       casesCount: Value(casesCount),
+      educationCount: Value(educationCount),
+      employedCount: Value(employedCount),
+      unemployedCount: Value(unemployedCount),
+      notes1: Value(notes1),
+      notes2: Value(notes2),
+      location: Value(location),
+      region: Value(region),
+      campId: Value(campId),
     );
   }
 
@@ -1056,15 +1116,25 @@ class Family extends DataClass implements Insertable<Family> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Family(
       id: serializer.fromJson<int>(json['id']),
-      location: serializer.fromJson<String>(json['location']),
-      campId: serializer.fromJson<int>(json['campId']),
       tentId: serializer.fromJson<int>(json['tentId']),
-      phoneNum: serializer.fromJson<String>(json['phoneNum']),
       nameEng: serializer.fromJson<String>(json['nameEng']),
+      nameAr: serializer.fromJson<String>(json['nameAr']),
+      phoneNum: serializer.fromJson<String>(json['phoneNum']),
+      wfpAid: serializer.fromJson<String>(json['wfpAid']),
+      unhcr: serializer.fromJson<String>(json['unhcr']),
       peopleCount: serializer.fromJson<int>(json['peopleCount']),
       womenCount: serializer.fromJson<int>(json['womenCount']),
       childrenCount: serializer.fromJson<int>(json['childrenCount']),
+      elderlyCount: serializer.fromJson<int>(json['elderlyCount']),
       casesCount: serializer.fromJson<int>(json['casesCount']),
+      educationCount: serializer.fromJson<int>(json['educationCount']),
+      employedCount: serializer.fromJson<int>(json['employedCount']),
+      unemployedCount: serializer.fromJson<int>(json['unemployedCount']),
+      notes1: serializer.fromJson<String>(json['notes1']),
+      notes2: serializer.fromJson<String>(json['notes2']),
+      location: serializer.fromJson<String>(json['location']),
+      region: serializer.fromJson<String>(json['region']),
+      campId: serializer.fromJson<int>(json['campId']),
     );
   }
   @override
@@ -1072,168 +1142,317 @@ class Family extends DataClass implements Insertable<Family> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'location': serializer.toJson<String>(location),
-      'campId': serializer.toJson<int>(campId),
       'tentId': serializer.toJson<int>(tentId),
-      'phoneNum': serializer.toJson<String>(phoneNum),
       'nameEng': serializer.toJson<String>(nameEng),
+      'nameAr': serializer.toJson<String>(nameAr),
+      'phoneNum': serializer.toJson<String>(phoneNum),
+      'wfpAid': serializer.toJson<String>(wfpAid),
+      'unhcr': serializer.toJson<String>(unhcr),
       'peopleCount': serializer.toJson<int>(peopleCount),
       'womenCount': serializer.toJson<int>(womenCount),
       'childrenCount': serializer.toJson<int>(childrenCount),
+      'elderlyCount': serializer.toJson<int>(elderlyCount),
       'casesCount': serializer.toJson<int>(casesCount),
+      'educationCount': serializer.toJson<int>(educationCount),
+      'employedCount': serializer.toJson<int>(employedCount),
+      'unemployedCount': serializer.toJson<int>(unemployedCount),
+      'notes1': serializer.toJson<String>(notes1),
+      'notes2': serializer.toJson<String>(notes2),
+      'location': serializer.toJson<String>(location),
+      'region': serializer.toJson<String>(region),
+      'campId': serializer.toJson<int>(campId),
     };
   }
 
   Family copyWith(
           {int? id,
-          String? location,
-          int? campId,
           int? tentId,
-          String? phoneNum,
           String? nameEng,
+          String? nameAr,
+          String? phoneNum,
+          String? wfpAid,
+          String? unhcr,
           int? peopleCount,
           int? womenCount,
           int? childrenCount,
-          int? casesCount}) =>
+          int? elderlyCount,
+          int? casesCount,
+          int? educationCount,
+          int? employedCount,
+          int? unemployedCount,
+          String? notes1,
+          String? notes2,
+          String? location,
+          String? region,
+          int? campId}) =>
       Family(
         id: id ?? this.id,
-        location: location ?? this.location,
-        campId: campId ?? this.campId,
         tentId: tentId ?? this.tentId,
-        phoneNum: phoneNum ?? this.phoneNum,
         nameEng: nameEng ?? this.nameEng,
+        nameAr: nameAr ?? this.nameAr,
+        phoneNum: phoneNum ?? this.phoneNum,
+        wfpAid: wfpAid ?? this.wfpAid,
+        unhcr: unhcr ?? this.unhcr,
         peopleCount: peopleCount ?? this.peopleCount,
         womenCount: womenCount ?? this.womenCount,
         childrenCount: childrenCount ?? this.childrenCount,
+        elderlyCount: elderlyCount ?? this.elderlyCount,
         casesCount: casesCount ?? this.casesCount,
+        educationCount: educationCount ?? this.educationCount,
+        employedCount: employedCount ?? this.employedCount,
+        unemployedCount: unemployedCount ?? this.unemployedCount,
+        notes1: notes1 ?? this.notes1,
+        notes2: notes2 ?? this.notes2,
+        location: location ?? this.location,
+        region: region ?? this.region,
+        campId: campId ?? this.campId,
       );
   @override
   String toString() {
     return (StringBuffer('Family(')
           ..write('id: $id, ')
-          ..write('location: $location, ')
-          ..write('campId: $campId, ')
           ..write('tentId: $tentId, ')
-          ..write('phoneNum: $phoneNum, ')
           ..write('nameEng: $nameEng, ')
+          ..write('nameAr: $nameAr, ')
+          ..write('phoneNum: $phoneNum, ')
+          ..write('wfpAid: $wfpAid, ')
+          ..write('unhcr: $unhcr, ')
           ..write('peopleCount: $peopleCount, ')
           ..write('womenCount: $womenCount, ')
           ..write('childrenCount: $childrenCount, ')
-          ..write('casesCount: $casesCount')
+          ..write('elderlyCount: $elderlyCount, ')
+          ..write('casesCount: $casesCount, ')
+          ..write('educationCount: $educationCount, ')
+          ..write('employedCount: $employedCount, ')
+          ..write('unemployedCount: $unemployedCount, ')
+          ..write('notes1: $notes1, ')
+          ..write('notes2: $notes2, ')
+          ..write('location: $location, ')
+          ..write('region: $region, ')
+          ..write('campId: $campId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, location, campId, tentId, phoneNum,
-      nameEng, peopleCount, womenCount, childrenCount, casesCount);
+  int get hashCode => Object.hash(
+      id,
+      tentId,
+      nameEng,
+      nameAr,
+      phoneNum,
+      wfpAid,
+      unhcr,
+      peopleCount,
+      womenCount,
+      childrenCount,
+      elderlyCount,
+      casesCount,
+      educationCount,
+      employedCount,
+      unemployedCount,
+      notes1,
+      notes2,
+      location,
+      region,
+      campId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Family &&
           other.id == this.id &&
-          other.location == this.location &&
-          other.campId == this.campId &&
           other.tentId == this.tentId &&
-          other.phoneNum == this.phoneNum &&
           other.nameEng == this.nameEng &&
+          other.nameAr == this.nameAr &&
+          other.phoneNum == this.phoneNum &&
+          other.wfpAid == this.wfpAid &&
+          other.unhcr == this.unhcr &&
           other.peopleCount == this.peopleCount &&
           other.womenCount == this.womenCount &&
           other.childrenCount == this.childrenCount &&
-          other.casesCount == this.casesCount);
+          other.elderlyCount == this.elderlyCount &&
+          other.casesCount == this.casesCount &&
+          other.educationCount == this.educationCount &&
+          other.employedCount == this.employedCount &&
+          other.unemployedCount == this.unemployedCount &&
+          other.notes1 == this.notes1 &&
+          other.notes2 == this.notes2 &&
+          other.location == this.location &&
+          other.region == this.region &&
+          other.campId == this.campId);
 }
 
 class FamilysCompanion extends UpdateCompanion<Family> {
   final Value<int> id;
-  final Value<String> location;
-  final Value<int> campId;
   final Value<int> tentId;
-  final Value<String> phoneNum;
   final Value<String> nameEng;
+  final Value<String> nameAr;
+  final Value<String> phoneNum;
+  final Value<String> wfpAid;
+  final Value<String> unhcr;
   final Value<int> peopleCount;
   final Value<int> womenCount;
   final Value<int> childrenCount;
+  final Value<int> elderlyCount;
   final Value<int> casesCount;
+  final Value<int> educationCount;
+  final Value<int> employedCount;
+  final Value<int> unemployedCount;
+  final Value<String> notes1;
+  final Value<String> notes2;
+  final Value<String> location;
+  final Value<String> region;
+  final Value<int> campId;
   const FamilysCompanion({
     this.id = const Value.absent(),
-    this.location = const Value.absent(),
-    this.campId = const Value.absent(),
     this.tentId = const Value.absent(),
-    this.phoneNum = const Value.absent(),
     this.nameEng = const Value.absent(),
+    this.nameAr = const Value.absent(),
+    this.phoneNum = const Value.absent(),
+    this.wfpAid = const Value.absent(),
+    this.unhcr = const Value.absent(),
     this.peopleCount = const Value.absent(),
     this.womenCount = const Value.absent(),
     this.childrenCount = const Value.absent(),
+    this.elderlyCount = const Value.absent(),
     this.casesCount = const Value.absent(),
+    this.educationCount = const Value.absent(),
+    this.employedCount = const Value.absent(),
+    this.unemployedCount = const Value.absent(),
+    this.notes1 = const Value.absent(),
+    this.notes2 = const Value.absent(),
+    this.location = const Value.absent(),
+    this.region = const Value.absent(),
+    this.campId = const Value.absent(),
   });
   FamilysCompanion.insert({
     this.id = const Value.absent(),
-    required String location,
-    required int campId,
     required int tentId,
-    required String phoneNum,
     required String nameEng,
+    required String nameAr,
+    required String phoneNum,
+    required String wfpAid,
+    required String unhcr,
     required int peopleCount,
     required int womenCount,
     required int childrenCount,
+    required int elderlyCount,
     required int casesCount,
-  })  : location = Value(location),
-        campId = Value(campId),
-        tentId = Value(tentId),
-        phoneNum = Value(phoneNum),
+    required int educationCount,
+    required int employedCount,
+    required int unemployedCount,
+    required String notes1,
+    required String notes2,
+    required String location,
+    required String region,
+    required int campId,
+  })  : tentId = Value(tentId),
         nameEng = Value(nameEng),
+        nameAr = Value(nameAr),
+        phoneNum = Value(phoneNum),
+        wfpAid = Value(wfpAid),
+        unhcr = Value(unhcr),
         peopleCount = Value(peopleCount),
         womenCount = Value(womenCount),
         childrenCount = Value(childrenCount),
-        casesCount = Value(casesCount);
+        elderlyCount = Value(elderlyCount),
+        casesCount = Value(casesCount),
+        educationCount = Value(educationCount),
+        employedCount = Value(employedCount),
+        unemployedCount = Value(unemployedCount),
+        notes1 = Value(notes1),
+        notes2 = Value(notes2),
+        location = Value(location),
+        region = Value(region),
+        campId = Value(campId);
   static Insertable<Family> custom({
     Expression<int>? id,
-    Expression<String>? location,
-    Expression<int>? campId,
     Expression<int>? tentId,
-    Expression<String>? phoneNum,
     Expression<String>? nameEng,
+    Expression<String>? nameAr,
+    Expression<String>? phoneNum,
+    Expression<String>? wfpAid,
+    Expression<String>? unhcr,
     Expression<int>? peopleCount,
     Expression<int>? womenCount,
     Expression<int>? childrenCount,
+    Expression<int>? elderlyCount,
     Expression<int>? casesCount,
+    Expression<int>? educationCount,
+    Expression<int>? employedCount,
+    Expression<int>? unemployedCount,
+    Expression<String>? notes1,
+    Expression<String>? notes2,
+    Expression<String>? location,
+    Expression<String>? region,
+    Expression<int>? campId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (location != null) 'location': location,
-      if (campId != null) 'camp_id': campId,
       if (tentId != null) 'tent_id': tentId,
-      if (phoneNum != null) 'phone_num': phoneNum,
       if (nameEng != null) 'name_eng': nameEng,
+      if (nameAr != null) 'name_ar': nameAr,
+      if (phoneNum != null) 'phone_num': phoneNum,
+      if (wfpAid != null) 'wfp_aid': wfpAid,
+      if (unhcr != null) 'unhcr': unhcr,
       if (peopleCount != null) 'people_count': peopleCount,
       if (womenCount != null) 'women_count': womenCount,
       if (childrenCount != null) 'children_count': childrenCount,
+      if (elderlyCount != null) 'elderly_count': elderlyCount,
       if (casesCount != null) 'cases_count': casesCount,
+      if (educationCount != null) 'education_count': educationCount,
+      if (employedCount != null) 'employed_count': employedCount,
+      if (unemployedCount != null) 'unemployed_count': unemployedCount,
+      if (notes1 != null) 'notes1': notes1,
+      if (notes2 != null) 'notes2': notes2,
+      if (location != null) 'location': location,
+      if (region != null) 'region': region,
+      if (campId != null) 'camp_id': campId,
     });
   }
 
   FamilysCompanion copyWith(
       {Value<int>? id,
-      Value<String>? location,
-      Value<int>? campId,
       Value<int>? tentId,
-      Value<String>? phoneNum,
       Value<String>? nameEng,
+      Value<String>? nameAr,
+      Value<String>? phoneNum,
+      Value<String>? wfpAid,
+      Value<String>? unhcr,
       Value<int>? peopleCount,
       Value<int>? womenCount,
       Value<int>? childrenCount,
-      Value<int>? casesCount}) {
+      Value<int>? elderlyCount,
+      Value<int>? casesCount,
+      Value<int>? educationCount,
+      Value<int>? employedCount,
+      Value<int>? unemployedCount,
+      Value<String>? notes1,
+      Value<String>? notes2,
+      Value<String>? location,
+      Value<String>? region,
+      Value<int>? campId}) {
     return FamilysCompanion(
       id: id ?? this.id,
-      location: location ?? this.location,
-      campId: campId ?? this.campId,
       tentId: tentId ?? this.tentId,
-      phoneNum: phoneNum ?? this.phoneNum,
       nameEng: nameEng ?? this.nameEng,
+      nameAr: nameAr ?? this.nameAr,
+      phoneNum: phoneNum ?? this.phoneNum,
+      wfpAid: wfpAid ?? this.wfpAid,
+      unhcr: unhcr ?? this.unhcr,
       peopleCount: peopleCount ?? this.peopleCount,
       womenCount: womenCount ?? this.womenCount,
       childrenCount: childrenCount ?? this.childrenCount,
+      elderlyCount: elderlyCount ?? this.elderlyCount,
       casesCount: casesCount ?? this.casesCount,
+      educationCount: educationCount ?? this.educationCount,
+      employedCount: employedCount ?? this.employedCount,
+      unemployedCount: unemployedCount ?? this.unemployedCount,
+      notes1: notes1 ?? this.notes1,
+      notes2: notes2 ?? this.notes2,
+      location: location ?? this.location,
+      region: region ?? this.region,
+      campId: campId ?? this.campId,
     );
   }
 
@@ -1243,20 +1462,23 @@ class FamilysCompanion extends UpdateCompanion<Family> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (location.present) {
-      map['location'] = Variable<String>(location.value);
-    }
-    if (campId.present) {
-      map['camp_id'] = Variable<int>(campId.value);
-    }
     if (tentId.present) {
       map['tent_id'] = Variable<int>(tentId.value);
+    }
+    if (nameEng.present) {
+      map['name_eng'] = Variable<String>(nameEng.value);
+    }
+    if (nameAr.present) {
+      map['name_ar'] = Variable<String>(nameAr.value);
     }
     if (phoneNum.present) {
       map['phone_num'] = Variable<String>(phoneNum.value);
     }
-    if (nameEng.present) {
-      map['name_eng'] = Variable<String>(nameEng.value);
+    if (wfpAid.present) {
+      map['wfp_aid'] = Variable<String>(wfpAid.value);
+    }
+    if (unhcr.present) {
+      map['unhcr'] = Variable<String>(unhcr.value);
     }
     if (peopleCount.present) {
       map['people_count'] = Variable<int>(peopleCount.value);
@@ -1267,8 +1489,35 @@ class FamilysCompanion extends UpdateCompanion<Family> {
     if (childrenCount.present) {
       map['children_count'] = Variable<int>(childrenCount.value);
     }
+    if (elderlyCount.present) {
+      map['elderly_count'] = Variable<int>(elderlyCount.value);
+    }
     if (casesCount.present) {
       map['cases_count'] = Variable<int>(casesCount.value);
+    }
+    if (educationCount.present) {
+      map['education_count'] = Variable<int>(educationCount.value);
+    }
+    if (employedCount.present) {
+      map['employed_count'] = Variable<int>(employedCount.value);
+    }
+    if (unemployedCount.present) {
+      map['unemployed_count'] = Variable<int>(unemployedCount.value);
+    }
+    if (notes1.present) {
+      map['notes1'] = Variable<String>(notes1.value);
+    }
+    if (notes2.present) {
+      map['notes2'] = Variable<String>(notes2.value);
+    }
+    if (location.present) {
+      map['location'] = Variable<String>(location.value);
+    }
+    if (region.present) {
+      map['region'] = Variable<String>(region.value);
+    }
+    if (campId.present) {
+      map['camp_id'] = Variable<int>(campId.value);
     }
     return map;
   }
@@ -1277,15 +1526,25 @@ class FamilysCompanion extends UpdateCompanion<Family> {
   String toString() {
     return (StringBuffer('FamilysCompanion(')
           ..write('id: $id, ')
-          ..write('location: $location, ')
-          ..write('campId: $campId, ')
           ..write('tentId: $tentId, ')
-          ..write('phoneNum: $phoneNum, ')
           ..write('nameEng: $nameEng, ')
+          ..write('nameAr: $nameAr, ')
+          ..write('phoneNum: $phoneNum, ')
+          ..write('wfpAid: $wfpAid, ')
+          ..write('unhcr: $unhcr, ')
           ..write('peopleCount: $peopleCount, ')
           ..write('womenCount: $womenCount, ')
           ..write('childrenCount: $childrenCount, ')
-          ..write('casesCount: $casesCount')
+          ..write('elderlyCount: $elderlyCount, ')
+          ..write('casesCount: $casesCount, ')
+          ..write('educationCount: $educationCount, ')
+          ..write('employedCount: $employedCount, ')
+          ..write('unemployedCount: $unemployedCount, ')
+          ..write('notes1: $notes1, ')
+          ..write('notes2: $notes2, ')
+          ..write('location: $location, ')
+          ..write('region: $region, ')
+          ..write('campId: $campId')
           ..write(')'))
         .toString();
   }
@@ -1303,21 +1562,6 @@ class $FamilysTable extends Familys with TableInfo<$FamilysTable, Family> {
       type: const IntType(),
       requiredDuringInsert: false,
       defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
-  final VerificationMeta _locationMeta = const VerificationMeta('location');
-  @override
-  late final GeneratedColumn<String?> location = GeneratedColumn<String?>(
-      'location', aliasedName, false,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 2, maxTextLength: 100),
-      type: const StringType(),
-      requiredDuringInsert: true);
-  final VerificationMeta _campIdMeta = const VerificationMeta('campId');
-  @override
-  late final GeneratedColumn<int?> campId = GeneratedColumn<int?>(
-      'camp_id', aliasedName, false,
-      type: const IntType(),
-      requiredDuringInsert: true,
-      $customConstraints: 'REFERENCES camps(id)');
   final VerificationMeta _tentIdMeta = const VerificationMeta('tentId');
   @override
   late final GeneratedColumn<int?> tentId = GeneratedColumn<int?>(
@@ -1325,15 +1569,30 @@ class $FamilysTable extends Familys with TableInfo<$FamilysTable, Family> {
       type: const IntType(),
       requiredDuringInsert: true,
       $customConstraints: 'REFERENCES tents(id)');
+  final VerificationMeta _nameEngMeta = const VerificationMeta('nameEng');
+  @override
+  late final GeneratedColumn<String?> nameEng = GeneratedColumn<String?>(
+      'name_eng', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
+  final VerificationMeta _nameArMeta = const VerificationMeta('nameAr');
+  @override
+  late final GeneratedColumn<String?> nameAr = GeneratedColumn<String?>(
+      'name_ar', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _phoneNumMeta = const VerificationMeta('phoneNum');
   @override
   late final GeneratedColumn<String?> phoneNum = GeneratedColumn<String?>(
       'phone_num', aliasedName, false,
       type: const StringType(), requiredDuringInsert: true);
-  final VerificationMeta _nameEngMeta = const VerificationMeta('nameEng');
+  final VerificationMeta _wfpAidMeta = const VerificationMeta('wfpAid');
   @override
-  late final GeneratedColumn<String?> nameEng = GeneratedColumn<String?>(
-      'name_eng', aliasedName, false,
+  late final GeneratedColumn<String?> wfpAid = GeneratedColumn<String?>(
+      'wfp_aid', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
+  final VerificationMeta _unhcrMeta = const VerificationMeta('unhcr');
+  @override
+  late final GeneratedColumn<String?> unhcr = GeneratedColumn<String?>(
+      'unhcr', aliasedName, false,
       type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _peopleCountMeta =
       const VerificationMeta('peopleCount');
@@ -1352,23 +1611,92 @@ class $FamilysTable extends Familys with TableInfo<$FamilysTable, Family> {
   late final GeneratedColumn<int?> childrenCount = GeneratedColumn<int?>(
       'children_count', aliasedName, false,
       type: const IntType(), requiredDuringInsert: true);
+  final VerificationMeta _elderlyCountMeta =
+      const VerificationMeta('elderlyCount');
+  @override
+  late final GeneratedColumn<int?> elderlyCount = GeneratedColumn<int?>(
+      'elderly_count', aliasedName, false,
+      type: const IntType(), requiredDuringInsert: true);
   final VerificationMeta _casesCountMeta = const VerificationMeta('casesCount');
   @override
   late final GeneratedColumn<int?> casesCount = GeneratedColumn<int?>(
       'cases_count', aliasedName, false,
       type: const IntType(), requiredDuringInsert: true);
+  final VerificationMeta _educationCountMeta =
+      const VerificationMeta('educationCount');
+  @override
+  late final GeneratedColumn<int?> educationCount = GeneratedColumn<int?>(
+      'education_count', aliasedName, false,
+      type: const IntType(), requiredDuringInsert: true);
+  final VerificationMeta _employedCountMeta =
+      const VerificationMeta('employedCount');
+  @override
+  late final GeneratedColumn<int?> employedCount = GeneratedColumn<int?>(
+      'employed_count', aliasedName, false,
+      type: const IntType(), requiredDuringInsert: true);
+  final VerificationMeta _unemployedCountMeta =
+      const VerificationMeta('unemployedCount');
+  @override
+  late final GeneratedColumn<int?> unemployedCount = GeneratedColumn<int?>(
+      'unemployed_count', aliasedName, false,
+      type: const IntType(), requiredDuringInsert: true);
+  final VerificationMeta _notes1Meta = const VerificationMeta('notes1');
+  @override
+  late final GeneratedColumn<String?> notes1 = GeneratedColumn<String?>(
+      'notes1', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
+  final VerificationMeta _notes2Meta = const VerificationMeta('notes2');
+  @override
+  late final GeneratedColumn<String?> notes2 = GeneratedColumn<String?>(
+      'notes2', aliasedName, false,
+      type: const StringType(), requiredDuringInsert: true);
+  final VerificationMeta _locationMeta = const VerificationMeta('location');
+  @override
+  late final GeneratedColumn<String?> location = GeneratedColumn<String?>(
+      'location', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 2, maxTextLength: 100),
+      type: const StringType(),
+      requiredDuringInsert: true,
+      $customConstraints: 'REFERENCES locations(location)');
+  final VerificationMeta _regionMeta = const VerificationMeta('region');
+  @override
+  late final GeneratedColumn<String?> region = GeneratedColumn<String?>(
+      'region', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 2, maxTextLength: 100),
+      type: const StringType(),
+      requiredDuringInsert: true,
+      $customConstraints: 'REFERENCES regions(region)');
+  final VerificationMeta _campIdMeta = const VerificationMeta('campId');
+  @override
+  late final GeneratedColumn<int?> campId = GeneratedColumn<int?>(
+      'camp_id', aliasedName, false,
+      type: const IntType(),
+      requiredDuringInsert: true,
+      $customConstraints: 'REFERENCES camps(id)');
   @override
   List<GeneratedColumn> get $columns => [
         id,
-        location,
-        campId,
         tentId,
-        phoneNum,
         nameEng,
+        nameAr,
+        phoneNum,
+        wfpAid,
+        unhcr,
         peopleCount,
         womenCount,
         childrenCount,
-        casesCount
+        elderlyCount,
+        casesCount,
+        educationCount,
+        employedCount,
+        unemployedCount,
+        notes1,
+        notes2,
+        location,
+        region,
+        campId
       ];
   @override
   String get aliasedName => _alias ?? 'familys';
@@ -1382,23 +1710,23 @@ class $FamilysTable extends Familys with TableInfo<$FamilysTable, Family> {
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('location')) {
-      context.handle(_locationMeta,
-          location.isAcceptableOrUnknown(data['location']!, _locationMeta));
-    } else if (isInserting) {
-      context.missing(_locationMeta);
-    }
-    if (data.containsKey('camp_id')) {
-      context.handle(_campIdMeta,
-          campId.isAcceptableOrUnknown(data['camp_id']!, _campIdMeta));
-    } else if (isInserting) {
-      context.missing(_campIdMeta);
-    }
     if (data.containsKey('tent_id')) {
       context.handle(_tentIdMeta,
           tentId.isAcceptableOrUnknown(data['tent_id']!, _tentIdMeta));
     } else if (isInserting) {
       context.missing(_tentIdMeta);
+    }
+    if (data.containsKey('name_eng')) {
+      context.handle(_nameEngMeta,
+          nameEng.isAcceptableOrUnknown(data['name_eng']!, _nameEngMeta));
+    } else if (isInserting) {
+      context.missing(_nameEngMeta);
+    }
+    if (data.containsKey('name_ar')) {
+      context.handle(_nameArMeta,
+          nameAr.isAcceptableOrUnknown(data['name_ar']!, _nameArMeta));
+    } else if (isInserting) {
+      context.missing(_nameArMeta);
     }
     if (data.containsKey('phone_num')) {
       context.handle(_phoneNumMeta,
@@ -1406,11 +1734,17 @@ class $FamilysTable extends Familys with TableInfo<$FamilysTable, Family> {
     } else if (isInserting) {
       context.missing(_phoneNumMeta);
     }
-    if (data.containsKey('name_eng')) {
-      context.handle(_nameEngMeta,
-          nameEng.isAcceptableOrUnknown(data['name_eng']!, _nameEngMeta));
+    if (data.containsKey('wfp_aid')) {
+      context.handle(_wfpAidMeta,
+          wfpAid.isAcceptableOrUnknown(data['wfp_aid']!, _wfpAidMeta));
     } else if (isInserting) {
-      context.missing(_nameEngMeta);
+      context.missing(_wfpAidMeta);
+    }
+    if (data.containsKey('unhcr')) {
+      context.handle(
+          _unhcrMeta, unhcr.isAcceptableOrUnknown(data['unhcr']!, _unhcrMeta));
+    } else if (isInserting) {
+      context.missing(_unhcrMeta);
     }
     if (data.containsKey('people_count')) {
       context.handle(
@@ -1436,6 +1770,14 @@ class $FamilysTable extends Familys with TableInfo<$FamilysTable, Family> {
     } else if (isInserting) {
       context.missing(_childrenCountMeta);
     }
+    if (data.containsKey('elderly_count')) {
+      context.handle(
+          _elderlyCountMeta,
+          elderlyCount.isAcceptableOrUnknown(
+              data['elderly_count']!, _elderlyCountMeta));
+    } else if (isInserting) {
+      context.missing(_elderlyCountMeta);
+    }
     if (data.containsKey('cases_count')) {
       context.handle(
           _casesCountMeta,
@@ -1443,6 +1785,60 @@ class $FamilysTable extends Familys with TableInfo<$FamilysTable, Family> {
               data['cases_count']!, _casesCountMeta));
     } else if (isInserting) {
       context.missing(_casesCountMeta);
+    }
+    if (data.containsKey('education_count')) {
+      context.handle(
+          _educationCountMeta,
+          educationCount.isAcceptableOrUnknown(
+              data['education_count']!, _educationCountMeta));
+    } else if (isInserting) {
+      context.missing(_educationCountMeta);
+    }
+    if (data.containsKey('employed_count')) {
+      context.handle(
+          _employedCountMeta,
+          employedCount.isAcceptableOrUnknown(
+              data['employed_count']!, _employedCountMeta));
+    } else if (isInserting) {
+      context.missing(_employedCountMeta);
+    }
+    if (data.containsKey('unemployed_count')) {
+      context.handle(
+          _unemployedCountMeta,
+          unemployedCount.isAcceptableOrUnknown(
+              data['unemployed_count']!, _unemployedCountMeta));
+    } else if (isInserting) {
+      context.missing(_unemployedCountMeta);
+    }
+    if (data.containsKey('notes1')) {
+      context.handle(_notes1Meta,
+          notes1.isAcceptableOrUnknown(data['notes1']!, _notes1Meta));
+    } else if (isInserting) {
+      context.missing(_notes1Meta);
+    }
+    if (data.containsKey('notes2')) {
+      context.handle(_notes2Meta,
+          notes2.isAcceptableOrUnknown(data['notes2']!, _notes2Meta));
+    } else if (isInserting) {
+      context.missing(_notes2Meta);
+    }
+    if (data.containsKey('location')) {
+      context.handle(_locationMeta,
+          location.isAcceptableOrUnknown(data['location']!, _locationMeta));
+    } else if (isInserting) {
+      context.missing(_locationMeta);
+    }
+    if (data.containsKey('region')) {
+      context.handle(_regionMeta,
+          region.isAcceptableOrUnknown(data['region']!, _regionMeta));
+    } else if (isInserting) {
+      context.missing(_regionMeta);
+    }
+    if (data.containsKey('camp_id')) {
+      context.handle(_campIdMeta,
+          campId.isAcceptableOrUnknown(data['camp_id']!, _campIdMeta));
+    } else if (isInserting) {
+      context.missing(_campIdMeta);
     }
     return context;
   }
@@ -1849,10 +2245,15 @@ mixin _$CampDaoMixin on DatabaseAccessor<MyDatabase> {
 }
 mixin _$FamilyDaoMixin on DatabaseAccessor<MyDatabase> {
   $FamilysTable get familys => attachedDatabase.familys;
+  $LocationsTable get locations => attachedDatabase.locations;
+  $RegionsTable get regions => attachedDatabase.regions;
+  $TentsTable get tents => attachedDatabase.tents;
+  $CampsTable get camps => attachedDatabase.camps;
 }
 mixin _$LocationDaoMixin on DatabaseAccessor<MyDatabase> {
   $LocationsTable get locations => attachedDatabase.locations;
 }
 mixin _$RegionDaoMixin on DatabaseAccessor<MyDatabase> {
   $RegionsTable get regions => attachedDatabase.regions;
+  $LocationsTable get locations => attachedDatabase.locations;
 }

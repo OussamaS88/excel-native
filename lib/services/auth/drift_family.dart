@@ -2,6 +2,22 @@ part of './drift_db.dart';
 
 class Familys extends Table {
   IntColumn get id => integer().autoIncrement()();
+  IntColumn get tentId => integer().customConstraint("REFERENCES tents(id)")();
+  TextColumn get nameEng => text()();
+  TextColumn get nameAr => text()();
+  TextColumn get phoneNum => text()();
+  TextColumn get wfpAid => text()();
+  TextColumn get unhcr => text()();
+  IntColumn get peopleCount => integer()();
+  IntColumn get womenCount => integer()();
+  IntColumn get childrenCount => integer()();
+  IntColumn get elderlyCount => integer()();
+  IntColumn get casesCount => integer()();
+  IntColumn get educationCount => integer()();
+  IntColumn get employedCount => integer()();
+  IntColumn get unemployedCount => integer()();
+  TextColumn get notes1 => text()();
+  TextColumn get notes2 => text()();
   TextColumn get location => text()
       .customConstraint("REFERENCES locations(location)")
       .withLength(min: 2, max: 100)();
@@ -9,13 +25,6 @@ class Familys extends Table {
       .customConstraint("REFERENCES regions(region)")
       .withLength(min: 2, max: 100)();
   IntColumn get campId => integer().customConstraint("REFERENCES camps(id)")();
-  IntColumn get tentId => integer().customConstraint("REFERENCES tents(id)")();
-  TextColumn get phoneNum => text()();
-  TextColumn get nameEng => text()();
-  IntColumn get peopleCount => integer()();
-  IntColumn get womenCount => integer()();
-  IntColumn get childrenCount => integer()();
-  IntColumn get casesCount => integer()();
 }
 
 @DriftAccessor(tables: [Familys, Locations, Regions, Tents, Camps])

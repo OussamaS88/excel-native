@@ -12,7 +12,10 @@ class FamilyDataView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(camp.name)),
       body: BlocProvider(
-        create: (context) => FamilyDataBloc(),
+        create: (context) => FamilyDataBloc(
+          db: context.read<MyDatabase>(),
+          camp: camp,
+        ),
         child: const FamilyDataPage(),
       ),
     );
