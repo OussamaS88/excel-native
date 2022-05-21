@@ -10,13 +10,15 @@ import '../family_data.dart';
 
 class FamilyDataPage extends StatelessWidget {
   const FamilyDataPage({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          ElevatedButton(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(context.read<FamilyDataBloc>().camp.name),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
                     context,
@@ -26,433 +28,441 @@ class FamilyDataPage extends StatelessWidget {
                               child: const FamilyAddView(),
                             )));
               },
-              child: const Text("Add")),
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(primary: Colors.green),
-              onPressed: () {
-                context
-                    .read<FamilyDataBloc>()
-                    .add(const WatchAllFamilyFromCampFamilyDataEvent());
-                context
-                    .read<FamilyDataBloc>()
-                    .add(const ExportToExcelFamilyDataEvent());
-              },
-              child: const Text("Export To Excel")),
-          const SizedBox(
-            height: 10,
+              label: const Text("Add"),
+              icon: const Icon(Icons.add),
+            ),
           ),
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(primary: Colors.green),
-              onPressed: () async {
-                FilePickerResult? result =
-                    await FilePicker.platform.pickFiles(withData: true);
-                if (result != null) {
-                  // final fileName = result.files.first.name;
-                  final fileBytes = result.files.first.bytes;
-                  // print(fileName);
-                  // context.read<ExcelApi>().bytes = fileBytes;
-                  // var l = context.read<ExcelApi>().readRowsToExcelRows();
-                  // print(l);
-                  // context
-                  //     .read<HomeBloc>()
-                  //     .add(LoadExcelHomeEvent(excelBytes: fileBytes));
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(primary: Colors.green),
+                onPressed: () {
                   context
                       .read<FamilyDataBloc>()
-                      .add(LoadFromExcelFamilyDataEvent(excelBytes: fileBytes));
-                } else {
-                  // discarder file picker
-                }
-              },
-              child: const Text("Load from Excel")),
-          BlocBuilder<FamilyDataBloc, FamilyDataState>(
-            builder: (context, state) {
-              switch (state.familyExcelStatus) {
-                case FamilyExcelStatus.unloaded:
-                  return const Text("unloaded");
-                case FamilyExcelStatus.loaded:
-                  return Text("Loaded: ${state.excelRows.length} rows");
-                default:
-                  return const Text("error");
+                      .add(const WatchAllFamilyFromCampFamilyDataEvent());
+                  context
+                      .read<FamilyDataBloc>()
+                      .add(const ExportToExcelFamilyDataEvent());
+                },
+                icon: const Icon(Icons.send),
+                label: const Text("Export To Excel")),
+          ),
+          PopupMenuButton<FamilyMenuAction>(
+            onSelected: (value) async {
+              switch (value) {
+                case FamilyMenuAction.loadFromExcel:
+                  FilePickerResult? result =
+                      await FilePicker.platform.pickFiles(withData: true);
+                  if (result != null) {
+                    final fileBytes = result.files.first.bytes;
+                    context.read<FamilyDataBloc>().add(
+                        LoadFromExcelFamilyDataEvent(excelBytes: fileBytes));
+                  } else {
+                    // discarder file picker
+                  }
+                  break;
+                case FamilyMenuAction.saveExcelData:
+                  context
+                      .read<FamilyDataBloc>()
+                      .add(const ExcelToDBFamilyDataEvent());
+                  break;
               }
             },
-          ),
-          ElevatedButton(
-              onPressed: () {
-                print(context.read<FamilyDataBloc>().state.excelRows);
-              },
-              child: const Text("print loaded data")),
-          BlocConsumer<FamilyDataBloc, FamilyDataState>(
-            listener: (context, state) {},
-            builder: (context, state) {
-              Map<String, double> dataMapBasic = {
-                "Women": state.womenCount.toDouble(),
-                "Children": state.childrenCount.toDouble(),
-                "Ederly": state.elderlyCount.toDouble(),
-              };
-              Map<String, double> dataMapSecondary = {
-                "Employed": state.empCount.toDouble(),
-                "Unemployed": state.unempCount.toDouble(),
-              };
-              return GridView(
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  crossAxisSpacing: 12,
-                  maxCrossAxisExtent: 600,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 1,
-                  mainAxisExtent: 480,
+            itemBuilder: (context) {
+              return const [
+                PopupMenuItem<FamilyMenuAction>(
+                  value: FamilyMenuAction.loadFromExcel,
+                  child: Text('Load excel file'),
                 ),
-                children: [
-                  Card(
-                    child: SizedBox(
-                      width: 200,
-                      height: 200,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                                "Total families: ${state.familyList.length}",
-                                style: const TextStyle(fontSize: 36)),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              width: 200,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text("People:",
-                                      style: TextStyle(fontSize: 24)),
-                                  Text("${state.peopleCount}",
-                                      style: const TextStyle(fontSize: 24)),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              width: 200,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text("Women:",
-                                      style: TextStyle(fontSize: 24)),
-                                  Text("${state.womenCount}",
-                                      style: const TextStyle(fontSize: 24)),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              width: 200,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text("Children:",
-                                      style: TextStyle(fontSize: 24)),
-                                  Text("${state.childrenCount}",
-                                      style: const TextStyle(fontSize: 24)),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              width: 200,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text("Elderly:",
-                                      style: TextStyle(fontSize: 24)),
-                                  Text("${state.elderlyCount}",
-                                      style: const TextStyle(fontSize: 24)),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              width: 200,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text("Med Cases:",
-                                      style: TextStyle(fontSize: 24)),
-                                  Text("${state.casesCount}",
-                                      style: const TextStyle(fontSize: 24)),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              width: 200,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text("In Education:",
-                                      style: TextStyle(fontSize: 24)),
-                                  Text("${state.eduCount}",
-                                      style: const TextStyle(fontSize: 24)),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              width: 200,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text("Employed:",
-                                      style: TextStyle(fontSize: 24)),
-                                  Text("${state.empCount}",
-                                      style: const TextStyle(fontSize: 24)),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              width: 200,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text("Unemployed:",
-                                      style: TextStyle(fontSize: 24)),
-                                  Text("${state.unempCount}",
-                                      style: const TextStyle(fontSize: 24)),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Card(
-                    child: SizedBox(
-                      width: 200,
-                      height: 200,
-                      child: PieChart(
-                        dataMap: dataMapBasic,
-                        legendOptions: const LegendOptions(
-                            legendPosition: LegendPosition.bottom,
-                            showLegendsInRow: true),
-                        chartValuesOptions: const ChartValuesOptions(
-                          decimalPlaces: 0,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Card(
-                    child: SizedBox(
-                      height: 200,
-                      width: 200,
-                      child: PieChart(
-                        dataMap: dataMapSecondary,
-                        legendOptions: const LegendOptions(
-                            legendPosition: LegendPosition.bottom,
-                            showLegendsInRow: true),
-                        chartValuesOptions: const ChartValuesOptions(
-                          decimalPlaces: 0,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              );
+                PopupMenuItem<FamilyMenuAction>(
+                  value: FamilyMenuAction.saveExcelData,
+                  child: Text('Save excel to database'),
+                )
+              ];
             },
           ),
-          BlocConsumer<FamilyDataBloc, FamilyDataState>(
-            listener: (context, state) {},
-            builder: (context, state) {
-              switch (state.fdStatus) {
-                case FDStatus.loading:
-                  return const CircularProgressIndicator();
-                default:
-                  return SizedBox(
-                    height: 500,
-                    child: ListView.builder(
-                      itemCount: state.familyList.length,
-                      itemBuilder: (context, index) {
-                        List<Family> l = state.familyList;
-                        return Card(
-                          elevation: 4,
-                          child: ListTile(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (_) => BlocProvider(
-                                            create: (_) =>
-                                                context.read<FamilyDataBloc>(),
-                                            child: FamilyDetailView(
-                                                family: l[index]),
-                                          )));
-                            },
-                            hoverColor: Colors.green,
-                            selectedColor: Colors.green,
-                            focusColor: Colors.green,
-                            leading: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "ID: ${l[index].id.toString()}",
-                                ),
-                                Text("Tent: ${l[index].tentId}"),
-                              ],
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 10,
+            ),
+            BlocConsumer<FamilyDataBloc, FamilyDataState>(
+              listener: (context, state) {},
+              builder: (context, state) {
+                Map<String, double> dataMapBasic = {
+                  "Women": state.womenCount.toDouble(),
+                  "Children": state.childrenCount.toDouble(),
+                  "Ederly": state.elderlyCount.toDouble(),
+                };
+                Map<String, double> dataMapSecondary = {
+                  "Employed": state.empCount.toDouble(),
+                  "Unemployed": state.unempCount.toDouble(),
+                };
+                return GridView(
+                  shrinkWrap: true,
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    crossAxisSpacing: 12,
+                    maxCrossAxisExtent: 600,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 1,
+                    mainAxisExtent: 480,
+                  ),
+                  children: [
+                    Card(
+                      child: SizedBox(
+                        width: 200,
+                        height: 200,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                  "Total families: ${state.familyList.length}",
+                                  style: const TextStyle(fontSize: 36)),
                             ),
-                            isThreeLine: true,
-
-                            title: SizedBox(
-                              height: 40,
-                              child: ScrollConfiguration(
-                                behavior: ScrollConfiguration.of(context)
-                                    .copyWith(scrollbars: false),
-                                child: GridView(
-                                  primary: false,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 2),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width: 200,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(l[index].nameEng),
-                                        Text(l[index].nameAr),
-                                      ],
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                            "People count: ${l[index].peopleCount}"),
-                                        Text("UNHCR: ${l[index].nameAr}"),
-                                      ],
-                                    ),
+                                    const Text("People:",
+                                        style: TextStyle(fontSize: 24)),
+                                    Text("${state.peopleCount}",
+                                        style: const TextStyle(fontSize: 24)),
                                   ],
                                 ),
                               ),
                             ),
-
-                            // SizedBox(
-                            //   width: 100,
-                            //   child: Row(
-                            //     children: [
-                            //       Column(
-                            //         crossAxisAlignment:
-                            //             CrossAxisAlignment.start,
-                            //         children: [
-                            //           Text(l[index].nameEng),
-                            //           Text(l[index].nameAr),
-                            //         ],
-                            //       ),
-                            //       const SizedBox(
-                            //         width: 200,
-                            //       ),
-                            //       Column(
-                            //         crossAxisAlignment:
-                            //             CrossAxisAlignment.start,
-                            //         children: [
-                            //           Text(l[index].nameEng),
-                            //           Text(l[index].nameAr),
-                            //         ],
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
-                            trailing: const Icon(Icons.arrow_right, size: 48),
-                            // ElevatedButton.icon(
-                            //   onPressed: () {},
-                            //   icon: const Icon(Icons.arrow_right),
-                            //   label: const Text("Details"),
-                            // ),
-                            subtitle: Text(l[index].phoneNum),
-                            horizontalTitleGap: 16,
-                            minLeadingWidth: 100,
-                            // title: Row(
-                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            //   children: [
-                            //     Column(
-                            //       crossAxisAlignment: CrossAxisAlignment.center,
-                            //       children: [
-                            //         Text(
-                            //           l[index].nameEng,
-                            //         ),
-                            //         Text(
-                            //           l[index].nameAr,
-                            //         ),
-                            //       ],
-                            //     ),
-                            //     Column(
-                            //       crossAxisAlignment: CrossAxisAlignment.center,
-                            //       children: [
-                            //         Text("Phone: ${l[index].phoneNum}"),
-                            //         Text("UNHCR: ${l[index].unhcr}"),
-                            //         Text("WFP AID: ${l[index].wfpAid}"),
-                            //       ],
-                            //     ),
-                            //     Column(
-                            //       crossAxisAlignment: CrossAxisAlignment.center,
-                            //       children: [
-                            //         Text("People: ${l[index].peopleCount}"),
-                            //         Text("Women: ${l[index].womenCount}"),
-                            //         Text("Children: ${l[index].childrenCount}"),
-                            //       ],
-                            //     ),
-                            //     Column(
-                            //       crossAxisAlignment: CrossAxisAlignment.center,
-                            //       children: [
-                            //         Text("Elderly: ${l[index].elderlyCount}"),
-                            //         Text(
-                            //             "In Education: ${l[index].educationCount}"),
-                            //         Text("Med Cases: ${l[index].casesCount}"),
-                            //       ],
-                            //     ),
-                            //     Column(
-                            //       crossAxisAlignment: CrossAxisAlignment.center,
-                            //       children: [
-                            //         Text(
-                            //           "Employed: ${l[index].employedCount}",
-                            //         ),
-                            //         Text(
-                            //             "Unemployed: ${l[index].unemployedCount}"),
-                            //       ],
-                            //     ),
-                            //   ],
-                            // ),
-                          ),
-                        );
-                      },
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width: 200,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text("Women:",
+                                        style: TextStyle(fontSize: 24)),
+                                    Text("${state.womenCount}",
+                                        style: const TextStyle(fontSize: 24)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width: 200,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text("Children:",
+                                        style: TextStyle(fontSize: 24)),
+                                    Text("${state.childrenCount}",
+                                        style: const TextStyle(fontSize: 24)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width: 200,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text("Elderly:",
+                                        style: TextStyle(fontSize: 24)),
+                                    Text("${state.elderlyCount}",
+                                        style: const TextStyle(fontSize: 24)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width: 200,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text("Med Cases:",
+                                        style: TextStyle(fontSize: 24)),
+                                    Text("${state.casesCount}",
+                                        style: const TextStyle(fontSize: 24)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width: 200,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text("In Education:",
+                                        style: TextStyle(fontSize: 24)),
+                                    Text("${state.eduCount}",
+                                        style: const TextStyle(fontSize: 24)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width: 200,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text("Employed:",
+                                        style: TextStyle(fontSize: 24)),
+                                    Text("${state.empCount}",
+                                        style: const TextStyle(fontSize: 24)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width: 200,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text("Unemployed:",
+                                        style: TextStyle(fontSize: 24)),
+                                    Text("${state.unempCount}",
+                                        style: const TextStyle(fontSize: 24)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  );
-              }
-            },
-          ),
-        ],
+                    Card(
+                      child: SizedBox(
+                        width: 200,
+                        height: 200,
+                        child: PieChart(
+                          dataMap: dataMapBasic,
+                          legendOptions: const LegendOptions(
+                              legendPosition: LegendPosition.bottom,
+                              showLegendsInRow: true),
+                          chartValuesOptions: const ChartValuesOptions(
+                            decimalPlaces: 0,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Card(
+                      child: SizedBox(
+                        height: 200,
+                        width: 200,
+                        child: PieChart(
+                          dataMap: dataMapSecondary,
+                          legendOptions: const LegendOptions(
+                              legendPosition: LegendPosition.bottom,
+                              showLegendsInRow: true),
+                          chartValuesOptions: const ChartValuesOptions(
+                            decimalPlaces: 0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+            BlocConsumer<FamilyDataBloc, FamilyDataState>(
+              listener: (context, state) {},
+              builder: (context, state) {
+                switch (state.fdStatus) {
+                  case FDStatus.loading:
+                    return const CircularProgressIndicator();
+                  default:
+                    return SizedBox(
+                      height: 500,
+                      child: ListView.builder(
+                        itemCount: state.familyList.length,
+                        itemBuilder: (context, index) {
+                          List<Family> l = state.familyList;
+                          return Card(
+                            elevation: 4,
+                            child: ListTile(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) => BlocProvider(
+                                              create: (_) => context
+                                                  .read<FamilyDataBloc>(),
+                                              child: FamilyDetailView(
+                                                  family: l[index]),
+                                            )));
+                              },
+                              hoverColor: Colors.green,
+                              selectedColor: Colors.green,
+                              focusColor: Colors.green,
+                              leading: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "ID: ${l[index].id.toString()}",
+                                  ),
+                                  Text("Tent: ${l[index].tentId}"),
+                                ],
+                              ),
+                              isThreeLine: true,
+
+                              title: SizedBox(
+                                height: 40,
+                                child: ScrollConfiguration(
+                                  behavior: ScrollConfiguration.of(context)
+                                      .copyWith(scrollbars: false),
+                                  child: GridView(
+                                    primary: false,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 2),
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(l[index].nameEng),
+                                          Text(l[index].nameAr),
+                                        ],
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                              "People count: ${l[index].peopleCount}"),
+                                          Text("UNHCR: ${l[index].nameAr}"),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                              // SizedBox(
+                              //   width: 100,
+                              //   child: Row(
+                              //     children: [
+                              //       Column(
+                              //         crossAxisAlignment:
+                              //             CrossAxisAlignment.start,
+                              //         children: [
+                              //           Text(l[index].nameEng),
+                              //           Text(l[index].nameAr),
+                              //         ],
+                              //       ),
+                              //       const SizedBox(
+                              //         width: 200,
+                              //       ),
+                              //       Column(
+                              //         crossAxisAlignment:
+                              //             CrossAxisAlignment.start,
+                              //         children: [
+                              //           Text(l[index].nameEng),
+                              //           Text(l[index].nameAr),
+                              //         ],
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
+                              trailing: const Icon(Icons.arrow_right, size: 48),
+                              // ElevatedButton.icon(
+                              //   onPressed: () {},
+                              //   icon: const Icon(Icons.arrow_right),
+                              //   label: const Text("Details"),
+                              // ),
+                              subtitle: Text(l[index].phoneNum),
+                              horizontalTitleGap: 16,
+                              minLeadingWidth: 100,
+                              // title: Row(
+                              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //   children: [
+                              //     Column(
+                              //       crossAxisAlignment: CrossAxisAlignment.center,
+                              //       children: [
+                              //         Text(
+                              //           l[index].nameEng,
+                              //         ),
+                              //         Text(
+                              //           l[index].nameAr,
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     Column(
+                              //       crossAxisAlignment: CrossAxisAlignment.center,
+                              //       children: [
+                              //         Text("Phone: ${l[index].phoneNum}"),
+                              //         Text("UNHCR: ${l[index].unhcr}"),
+                              //         Text("WFP AID: ${l[index].wfpAid}"),
+                              //       ],
+                              //     ),
+                              //     Column(
+                              //       crossAxisAlignment: CrossAxisAlignment.center,
+                              //       children: [
+                              //         Text("People: ${l[index].peopleCount}"),
+                              //         Text("Women: ${l[index].womenCount}"),
+                              //         Text("Children: ${l[index].childrenCount}"),
+                              //       ],
+                              //     ),
+                              //     Column(
+                              //       crossAxisAlignment: CrossAxisAlignment.center,
+                              //       children: [
+                              //         Text("Elderly: ${l[index].elderlyCount}"),
+                              //         Text(
+                              //             "In Education: ${l[index].educationCount}"),
+                              //         Text("Med Cases: ${l[index].casesCount}"),
+                              //       ],
+                              //     ),
+                              //     Column(
+                              //       crossAxisAlignment: CrossAxisAlignment.center,
+                              //       children: [
+                              //         Text(
+                              //           "Employed: ${l[index].employedCount}",
+                              //         ),
+                              //         Text(
+                              //             "Unemployed: ${l[index].unemployedCount}"),
+                              //       ],
+                              //     ),
+                              //   ],
+                              // ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

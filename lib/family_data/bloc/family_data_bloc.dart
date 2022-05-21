@@ -36,6 +36,7 @@ class FamilyDataBloc extends Bloc<FamilyDataEvent, FamilyDataState> {
     on<InsertFamilyFamilyDataEvent>(_insertFamilyFamilyDataEvent);
     on<ExportToExcelFamilyDataEvent>(_exportToExcelFamilyDataEvent);
     on<LoadFromExcelFamilyDataEvent>(_loadFromExcelFamilyDataEvent);
+    on<ExcelToDBFamilyDataEvent>(_excelToDBFamilyDataEvent);
     add(const WatchAllFamilyFromCampFamilyDataEvent());
   }
 
@@ -189,5 +190,51 @@ class FamilyDataBloc extends Bloc<FamilyDataEvent, FamilyDataState> {
       print(e);
       return null;
     }
+  }
+
+  FutureOr<void> _excelToDBFamilyDataEvent(
+      ExcelToDBFamilyDataEvent event, Emitter<FamilyDataState> emit) async {
+    if (state.fdStatus != FDStatus.ready) return null;
+    emit(state.copyWith(fdStatus: FDStatus.loading));
+    List<ExcelRow> excelRows = state.excelRows;
+    print("Inserting ${excelRows.length} rows into db...");
+    if (excelRows.length < 5) {
+      emit(state.copyWith(fdStatus: FDStatus.ready));
+      return null;
+    }
+    var dao = db.familyDao;
+    int i = 3;
+    for (var row in excelRows) {
+      if (i >= 0) {
+        i--;
+        continue;
+      }
+      FamilysCompanion familysCompanion = FamilysCompanion(
+        campId: Value(camp.id),
+        location: Value(camp.location),
+        region: Value(camp.region),
+        id: Value(row.mp[0]),
+        tentId: Value(row.mp[1]),
+        nameEng: Value(row.mp[2]),
+        nameAr: Value(row.mp[3]),
+        phoneNum: Value(row.mp[4]),
+        wfpAid: Value(row.mp[5]),
+        unhcr: Value(row.mp[6]),
+        peopleCount: Value(row.mp[7]),
+        womenCount: Value(row.mp[8]),
+        childrenCount: Value(row.mp[9]),
+        elderlyCount: Value(row.mp[10]),
+        casesCount: Value(row.mp[11]),
+        educationCount: Value(row.mp[12]),
+        unemployedCount: Value(row.mp[13]),
+        employedCount: Value(row.mp[14]),
+        notes1: Value(row.mp[15]),
+        notes2: Value(row.mp[16]),
+      );
+      print(familysCompanion);
+      await dao.insertFamily(familysCompanion: familysCompanion);
+    }
+    print("done");
+    emit(state.copyWith(fdStatus: FDStatus.ready));
   }
 }

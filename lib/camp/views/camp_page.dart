@@ -1,3 +1,4 @@
+import 'package:excel_native/app/bloc/app_bloc.dart';
 import 'package:excel_native/detailed_camp/detailed_camp.dart';
 import 'package:excel_native/services/auth/drift_db.dart';
 import 'package:flutter/material.dart';
@@ -14,119 +15,108 @@ class CampPage extends StatefulWidget {
 class _CampPageState extends State<CampPage> {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-        children: [
-          // ElevatedButton(
-          //     onPressed: () {
-          //       context.read<CampBloc>().add(const GetAllLocationsCampEvent());
-          //     },
-          //     child: const Text("Refresh")),
-          // ElevatedButton(
-          //     onPressed: () {
-          //       context
-          //           .read<CampBloc>()
-          //           .add(const WatchAllLocationsCampEvent());
-          //     },
-          //     child: const Text("Stream")),
-          ElevatedButton(
-              onPressed: () async {
-                // CampBloc cB = BlocProvider.of<CampBloc>(context);
-                // bool? hasSavedValue = await showDialog<bool>(
-                String? hasSavedValue = await showDialog<String>(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (_) {
-                    var t = TextEditingController();
-                    // return BlocProvider(
-                    //   create: (context) => cB,
-                    //   child:
-                    return AlertDialog(
-                      actionsAlignment: MainAxisAlignment.spaceEvenly,
-                      title: const Text("Add location"),
-                      content: TextFormField(
-                        controller: t,
-                        autofocus: true,
-                        decoration: InputDecoration(
-                          filled: true,
-                          hintText: "Location...",
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              t.text = '';
-                            },
-                            icon: const Icon(Icons.delete),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Camps"),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton.icon(
+                icon: const Icon(Icons.add),
+                onPressed: () async {
+                  String? hasSavedValue = await showDialog<String>(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (_) {
+                      var t = TextEditingController();
+                      return AlertDialog(
+                        actionsAlignment: MainAxisAlignment.spaceEvenly,
+                        title: const Text("Add location"),
+                        content: TextFormField(
+                          controller: t,
+                          autofocus: true,
+                          decoration: InputDecoration(
+                            filled: true,
+                            hintText: "Location...",
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                t.text = '';
+                              },
+                              icon: const Icon(Icons.delete),
+                            ),
                           ),
                         ),
-                      ),
-                      actions: [
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            if (t.text.length < 3) {
-                              return;
-                            }
-                            // BlocProvider.of<CampBloc>(context).add(
-                            //     CreateLocationCampEvent(location: t.text));
-
-                            Navigator.of(context, rootNavigator: true)
-                                .pop(t.text);
-                          },
-                          icon: const Icon(Icons.add),
-                          label: const Text("Add"),
-                        ),
-                        ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(primary: Colors.red),
-                          onPressed: () {
-                            Navigator.of(context, rootNavigator: true)
-                                .pop(null);
-                            t.dispose();
-                          },
-                          icon: const Icon(Icons.delete),
-                          label: const Text("Discard"),
-                        ),
-                      ],
-                    );
-                  },
-                );
-                if (hasSavedValue == null || hasSavedValue.isEmpty) {
-                  return;
-                } else {
-                  print("has value, $hasSavedValue");
-                  BlocProvider.of<CampBloc>(context).add(
-                    CreateLocationCampEvent(location: hasSavedValue),
+                        actions: [
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              if (t.text.length < 3) {
+                                return;
+                              }
+                              Navigator.of(context, rootNavigator: true)
+                                  .pop(t.text);
+                            },
+                            icon: const Icon(Icons.add),
+                            label: const Text("Add"),
+                          ),
+                          ElevatedButton.icon(
+                            style:
+                                ElevatedButton.styleFrom(primary: Colors.red),
+                            onPressed: () {
+                              Navigator.of(context, rootNavigator: true)
+                                  .pop(null);
+                              t.dispose();
+                            },
+                            icon: const Icon(Icons.delete),
+                            label: const Text("Discard"),
+                          ),
+                        ],
+                      );
+                    },
                   );
+                  if (hasSavedValue == null || hasSavedValue.isEmpty) {
+                    return;
+                  } else {
+                    print("has value, $hasSavedValue");
+                    BlocProvider.of<CampBloc>(context).add(
+                      CreateLocationCampEvent(location: hasSavedValue),
+                    );
 
-                  print("added");
-                  Future.delayed(const Duration(milliseconds: 500), () {
-                    BlocProvider.of<CampBloc>(context)
-                        .add(const GetAllLocationsCampEvent());
-                  });
-                  print("over");
-                }
-              },
-              child: const Text("Add")),
-          // ElevatedButton(
-          //     onPressed: () {
-          //       context.read<CampBloc>().add(const DebugCampEvent());
-          //     },
-          //     child: const Text("Debug")),
-          // ElevatedButton(
-          //     onPressed: () {
-          //       print(context.read<CampBloc>().state);
-          //       print(context.read<CampBloc>().state.campsList);
-          //       print(context.read<CampBloc>().state.locationsList);
-          //       print(context.read<CampBloc>().state.regionsWithLocations);
-          //     },
-          //     child: const Text("print")),
-          // ElevatedButton(
-          //     onPressed: () {
-          //       context
-          //           .read<CampBloc>()
-          //           .add(const GetAllCampsWithLocationsCampEvent());
-          //     },
-          //     child: const Text("try")),
-          const LocationsGridView(),
+                    print("added");
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      BlocProvider.of<CampBloc>(context)
+                          .add(const GetAllLocationsCampEvent());
+                    });
+                    print("over");
+                  }
+                },
+                label: const Text("Add")),
+          ),
+          PopupMenuButton<MenuAction>(
+            onSelected: (value) async {
+              switch (value) {
+                case MenuAction.logout:
+                  context.read<AppBloc>().add(AppLogoutRequested());
+                  break;
+              }
+            },
+            itemBuilder: (context) {
+              return const [
+                PopupMenuItem<MenuAction>(
+                  value: MenuAction.logout,
+                  child: Text('Log out'),
+                )
+              ];
+            },
+          )
         ],
+      ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          children: [
+            const LocationsGridView(),
+          ],
+        ),
       ),
     );
   }

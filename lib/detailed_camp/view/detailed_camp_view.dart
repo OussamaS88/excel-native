@@ -9,13 +9,10 @@ class DetailedCampView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("${region.region} camps:")),
-      body: BlocProvider(
-        create: (context) =>
-            DetailedCampBloc(db: context.read<MyDatabase>(), region: region),
-        child: const DetailedCampPage(),
-      ),
+    return BlocProvider(
+      create: (context) =>
+          DetailedCampBloc(db: context.read<MyDatabase>(), region: region),
+      child: const DetailedCampPage(),
     );
   }
 }

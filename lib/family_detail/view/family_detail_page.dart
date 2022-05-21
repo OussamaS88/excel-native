@@ -63,6 +63,7 @@ class _FamilyDetailPageState extends State<FamilyDetailPage> {
     peopleController.text = family.peopleCount.toString();
     womenController.text = family.womenCount.toString();
     childrenController.text = family.childrenCount.toString();
+    elderlyController.text = family.elderlyCount.toString();
     medController.text = family.casesCount.toString();
     eduController.text = family.educationCount.toString();
     empController.text = family.employedCount.toString();

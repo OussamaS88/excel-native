@@ -34,7 +34,7 @@ class FamilyDao extends DatabaseAccessor<MyDatabase> with _$FamilyDaoMixin {
 
   // FROM FAMILY
   Future insertFamily({required FamilysCompanion familysCompanion}) =>
-      into(familys).insert(familysCompanion);
+      into(familys).insert(familysCompanion, mode: InsertMode.insertOrIgnore);
 
   Future<Family?> getSingleFamilyFromId({required int pId}) =>
       (select(familys)..where((tbl) => tbl.id.equals(pId))).getSingleOrNull();

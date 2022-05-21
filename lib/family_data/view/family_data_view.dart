@@ -11,16 +11,17 @@ class FamilyDataView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ExcelApi excel = context.read<ExcelApi>();
-    return Scaffold(
-      appBar: AppBar(title: Text(camp.name)),
-      body: BlocProvider(
-        create: (context) => FamilyDataBloc(
-          db: context.read<MyDatabase>(),
-          camp: camp,
-          excelApi: excel,
-        ),
-        child: const FamilyDataPage(),
+    // return Scaffold(
+    // appBar: AppBar(title: Text(camp.name)),
+    // body:
+    return BlocProvider(
+      create: (context) => FamilyDataBloc(
+        db: context.read<MyDatabase>(),
+        camp: camp,
+        excelApi: excel,
       ),
+      child: const FamilyDataPage(),
     );
+    // );
   }
 }

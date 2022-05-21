@@ -43,3 +43,7 @@ class LoadFromExcelFamilyDataEvent extends FamilyDataEvent {
   final Uint8List? excelBytes;
   const LoadFromExcelFamilyDataEvent({required this.excelBytes});
 }
+
+class ExcelToDBFamilyDataEvent extends FamilyDataEvent {
+  const ExcelToDBFamilyDataEvent();
+}

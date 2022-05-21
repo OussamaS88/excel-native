@@ -11,33 +11,9 @@ class CampView extends StatelessWidget {
   static Page page() => const MaterialPage<void>(child: CampView());
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Camps"),
-        actions: [
-          PopupMenuButton<MenuAction>(
-            onSelected: (value) async {
-              switch (value) {
-                case MenuAction.logout:
-                  context.read<AppBloc>().add(AppLogoutRequested());
-                  break;
-              }
-            },
-            itemBuilder: (context) {
-              return const [
-                PopupMenuItem<MenuAction>(
-                  value: MenuAction.logout,
-                  child: Text('Log out'),
-                )
-              ];
-            },
-          )
-        ],
-      ),
-      body: BlocProvider(
+    return  BlocProvider(
         create: (context) => CampBloc(db: context.read<MyDatabase>()),
         child: const CampPage(),
-      ),
-    );
+      );
   }
 }
