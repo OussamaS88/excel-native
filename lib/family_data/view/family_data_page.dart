@@ -4,6 +4,7 @@ import 'package:excel_native/home/view/charts/pie_chart.dart';
 import 'package:excel_native/services/auth/drift_db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pie_chart/pie_chart.dart';
 import '../family_data.dart';
 
 class FamilyDataPage extends StatelessWidget {
@@ -28,28 +29,32 @@ class FamilyDataPage extends StatelessWidget {
           BlocConsumer<FamilyDataBloc, FamilyDataState>(
             listener: (context, state) {},
             builder: (context, state) {
+              Map<String, double> dataMapBasic = {
+                "Women": state.womenCount.toDouble(),
+                "Children": state.childrenCount.toDouble(),
+                "Ederly": state.elderlyCount.toDouble(),
+              };
+              Map<String, double> dataMapSecondary = {
+                "Employed": state.empCount.toDouble(),
+                "Unemployed": state.unempCount.toDouble(),
+              };
               return GridView(
                 shrinkWrap: true,
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 400),
                 children: [
-                  const Card(
+                  Card(
                     child: SizedBox(
                       width: 200,
                       height: 200,
-                      child: Text("data"),
+                      child: PieChart(dataMap: dataMapBasic),
                     ),
                   ),
                   Card(
-                    elevation: 16,
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 200,
-                          width: 200,
-                          child: DonutAutoLabelChart.withSampleData(),
-                        ),
-                      ],
+                    child: SizedBox(
+                      height: 200,
+                      width: 200,
+                      child: PieChart(dataMap: dataMapSecondary),
                     ),
                   ),
                   const Card(

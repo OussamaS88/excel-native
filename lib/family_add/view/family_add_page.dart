@@ -60,7 +60,7 @@ class _FamilyAddPageState extends State<FamilyAddPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Wrap(
-              spacing: 16,
+              spacing: 4,
               children: [
                 SizedBox(
                   width: 400,
