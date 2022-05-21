@@ -12,7 +12,18 @@ class FamilyDataBloc extends Bloc<FamilyDataEvent, FamilyDataState> {
   final MyDatabase db;
   final Camp camp;
   FamilyDataBloc({required this.db, required this.camp})
-      : super(const FamilyDataState(fdStatus: FDStatus.ready, familyList: [])) {
+      : super(const FamilyDataState(
+          fdStatus: FDStatus.ready,
+          familyList: [],
+          casesCount: 0,
+          childrenCount: 0,
+          eduCount: 0,
+          elderlyCount: 0,
+          empCount: 0,
+          peopleCount: 0,
+          unempCount: 0,
+          womenCount: 0,
+        )) {
     on<GetAllFamilyFromCampFamilyDataEvent>(
         _getAllFamilyFromCampFamilyDataEvent);
     on<WatchAllFamilyFromCampFamilyDataEvent>(
@@ -64,9 +75,36 @@ class FamilyDataBloc extends Bloc<FamilyDataEvent, FamilyDataState> {
     await emit.forEach(
       dao.watchAllFamilysFromCamp(camp: camp),
       onData: (data) {
+        List<Family> familyList = List<Family>.from(data as Iterable);
+        int peopleCount = 0;
+        int womenCount = 0;
+        int childrenCount = 0;
+        int elderlyCount = 0;
+        int casesCount = 0;
+        int eduCount = 0;
+        int empCount = 0;
+        int unempCount = 0;
+        for (var element in familyList) {
+          peopleCount += element.peopleCount;
+          womenCount += element.womenCount;
+          childrenCount += element.childrenCount;
+          elderlyCount += element.elderlyCount;
+          casesCount += element.casesCount;
+          eduCount += element.educationCount;
+          empCount += element.employedCount;
+          unempCount += element.unemployedCount;
+        }
         return state.copyWith(
           fdStatus: FDStatus.ready,
-          familyList: List<Family>.from(data as Iterable),
+          familyList: familyList,
+          peopleCount: peopleCount,
+          womenCount: womenCount,
+          childrenCount: childrenCount,
+          elderlyCount: elderlyCount,
+          casesCount: casesCount,
+          eduCount: eduCount,
+          empCount: empCount,
+          unempCount: unempCount,
         );
       },
     );

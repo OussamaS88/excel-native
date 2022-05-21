@@ -84,3 +84,18 @@ class DonutAutoLabelChartAgeStats extends StatelessWidget {
             arcWidth: 60, arcRendererDecorators: [charts.ArcLabelDecorator()]));
   }
 }
+
+class DonutAutoLabelChartFamilyStats extends StatelessWidget {
+  final List<charts.Series<AgeStatistics, String>> seriesList;
+  final bool animate;
+
+  DonutAutoLabelChartFamilyStats(this.seriesList, {this.animate = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return charts.PieChart<String>(seriesList,
+        animate: animate,
+        defaultRenderer: charts.ArcRendererConfig(
+            arcWidth: 60, arcRendererDecorators: [charts.ArcLabelDecorator()]));
+  }
+}
