@@ -1,3 +1,4 @@
+import 'package:excel_api/excel_api.dart';
 import 'package:excel_native/services/auth/drift_db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,12 +10,14 @@ class FamilyDataView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ExcelApi excel = context.read<ExcelApi>();
     return Scaffold(
       appBar: AppBar(title: Text(camp.name)),
       body: BlocProvider(
         create: (context) => FamilyDataBloc(
           db: context.read<MyDatabase>(),
           camp: camp,
+          excelApi: excel,
         ),
         child: const FamilyDataPage(),
       ),

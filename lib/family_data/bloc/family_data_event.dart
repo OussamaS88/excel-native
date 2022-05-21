@@ -30,3 +30,6 @@ class WatchAllFamilyFromRegionFamilyDataEvent extends FamilyDataEvent {
 class WatchAllFamilyFromLocationFamilyDataEvent extends FamilyDataEvent {
   const WatchAllFamilyFromLocationFamilyDataEvent();
 }
+class ExportToExcelFamilyDataEvent extends FamilyDataEvent {
+  const ExportToExcelFamilyDataEvent();
+}

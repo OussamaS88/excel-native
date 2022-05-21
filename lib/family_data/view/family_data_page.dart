@@ -26,6 +26,14 @@ class FamilyDataPage extends StatelessWidget {
                             )));
               },
               child: const Text("Add")),
+          ElevatedButton(
+              style: ElevatedButton.styleFrom(primary: Colors.green),
+              onPressed: () {
+                context
+                    .read<FamilyDataBloc>()
+                    .add(const ExportToExcelFamilyDataEvent());
+              },
+              child: const Text("Export To Excel")),
           BlocConsumer<FamilyDataBloc, FamilyDataState>(
             listener: (context, state) {},
             builder: (context, state) {
@@ -41,29 +49,50 @@ class FamilyDataPage extends StatelessWidget {
               return GridView(
                 shrinkWrap: true,
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 400),
+                  crossAxisSpacing: 12,
+                  maxCrossAxisExtent: 600,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 1,
+                  mainAxisExtent: 400,
+                ),
                 children: [
-                  Card(
-                    child: SizedBox(
-                      width: 200,
-                      height: 200,
-                      child: PieChart(dataMap: dataMapBasic),
-                    ),
-                  ),
-                  Card(
-                    child: SizedBox(
-                      height: 200,
-                      width: 200,
-                      child: PieChart(dataMap: dataMapSecondary),
-                    ),
-                  ),
                   const Card(
                     child: SizedBox(
                       width: 200,
                       height: 200,
                       child: Text("data"),
                     ),
-                  )
+                  ),
+                  Card(
+                    child: SizedBox(
+                      width: 200,
+                      height: 200,
+                      child: PieChart(
+                        dataMap: dataMapBasic,
+                        legendOptions: const LegendOptions(
+                            legendPosition: LegendPosition.bottom,
+                            showLegendsInRow: true),
+                        chartValuesOptions: const ChartValuesOptions(
+                          decimalPlaces: 0,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Card(
+                    child: SizedBox(
+                      height: 200,
+                      width: 200,
+                      child: PieChart(
+                        dataMap: dataMapSecondary,
+                        legendOptions: const LegendOptions(
+                            legendPosition: LegendPosition.bottom,
+                            showLegendsInRow: true),
+                        chartValuesOptions: const ChartValuesOptions(
+                          decimalPlaces: 0,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               );
             },

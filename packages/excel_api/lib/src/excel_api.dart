@@ -48,6 +48,28 @@ class ExcelApi {
     return mp;
   }
 
+  void exportToDataStructureFromBytes({
+    required Uint8List excelBytes,
+    required List<ExcelRow> excelRows,
+  }) {
+    var excel = Excel.decodeBytes(excelBytes);
+    for (var table in excel.tables.keys) {
+      var t = excel.tables[table];
+      if (t != null) {
+        for (var row in excelRows) {
+          t.appendRow(row.mp);
+        }
+      }
+      var k = excel.encode();
+      var pathToExe = Platform.resolvedExecutable;
+      pathToExe = pathToExe.substring(0, pathToExe.indexOf("excel_native.exe"));
+      File(p.join(pathToExe, "DATA_AS_EXCEL.xlsx"))
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(k!);
+      print("done saving.");
+    }
+  }
+
   void exportToExcelFromBytes(
       {required List<ExcelRow> excelRows, required Uint8List excelBytes}) {
     var excel = Excel.decodeBytes(excelBytes);

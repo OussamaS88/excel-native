@@ -17,6 +17,7 @@ class DetailedCampPage extends StatelessWidget {
                   .add(const GetAllCampsFromRegionDetailedCampEvent());
             },
             child: const Text("Refresh")),
+        
         ElevatedButton(
             onPressed: () async {
               String? hasSavedValue = await showDialog<String>(
