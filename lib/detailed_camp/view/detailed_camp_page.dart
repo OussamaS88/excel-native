@@ -17,7 +17,6 @@ class DetailedCampPage extends StatelessWidget {
                   .add(const GetAllCampsFromRegionDetailedCampEvent());
             },
             child: const Text("Refresh")),
-        
         ElevatedButton(
             onPressed: () async {
               String? hasSavedValue = await showDialog<String>(
@@ -100,11 +99,32 @@ class DetailedCampPage extends StatelessWidget {
                                   builder: (context) =>
                                       FamilyDataView(camp: k[index])));
                         },
-                        trailing: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(primary: Colors.red),
-                          onPressed: () {},
-                          icon: const Icon(Icons.delete),
-                          label: const Text("Delete"),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Padding(
+                            //   padding: const EdgeInsets.all(8.0),
+                            //   child: ElevatedButton.icon(
+                            //       style: ElevatedButton.styleFrom(
+                            //           primary: Colors.green),
+                            //       onPressed: () {
+                            //         // context.read<FamilyDataBloc>().add(
+                            //         //     const WatchAllFamilyFromCampFamilyDataEvent());
+                            //         // context.read<FamilyDataBloc>().add(
+                            //         //     const ExportToExcelFamilyDataEvent());
+                            //       },
+                            //       icon:
+                            //           const Icon(Icons.data_exploration_sharp),
+                            //       label: const Text("Export To Excel")),
+                            // ),
+                            ElevatedButton.icon(
+                              style:
+                                  ElevatedButton.styleFrom(primary: Colors.red),
+                              onPressed: () {},
+                              icon: const Icon(Icons.delete),
+                              label: const Text("Delete"),
+                            ),
+                          ],
                         ),
                         leading: Text("ID: ${k[index].id.toString()}",
                             textAlign: TextAlign.center),

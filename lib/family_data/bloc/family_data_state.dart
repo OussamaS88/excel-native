@@ -6,9 +6,13 @@ enum FDStatus {
   ready,
 }
 
+enum FamilyExcelStatus { error, loaded, unloaded }
+
 class FamilyDataState extends Equatable {
   final FDStatus fdStatus;
+  final FamilyExcelStatus familyExcelStatus;
   final List<Family> familyList;
+  final List<ExcelRow> excelRows;
   final int peopleCount;
   final int womenCount;
   final int childrenCount;
@@ -19,6 +23,8 @@ class FamilyDataState extends Equatable {
   final int unempCount;
   const FamilyDataState({
     required this.fdStatus,
+    required this.familyExcelStatus,
+    required this.excelRows,
     required this.familyList,
     required this.peopleCount,
     required this.womenCount,
@@ -41,9 +47,13 @@ class FamilyDataState extends Equatable {
     int? eduCount,
     int? empCount,
     int? unempCount,
+    FamilyExcelStatus? familyExcelStatus,
+    List<ExcelRow>? excelRows,
   }) {
     return FamilyDataState(
       fdStatus: fdStatus ?? this.fdStatus,
+      familyExcelStatus: familyExcelStatus ?? this.familyExcelStatus,
+      excelRows: excelRows ?? this.excelRows,
       familyList: familyList ?? this.familyList,
       peopleCount: peopleCount ?? this.peopleCount,
       womenCount: womenCount ?? this.womenCount,
@@ -59,6 +69,7 @@ class FamilyDataState extends Equatable {
   @override
   List<Object?> get props => [
         fdStatus,
+        familyExcelStatus,
         familyList,
         peopleCount,
         womenCount,
@@ -68,5 +79,6 @@ class FamilyDataState extends Equatable {
         eduCount,
         empCount,
         unempCount,
+        excelRows,
       ];
 }

@@ -10,12 +10,15 @@ class FamilyDataEvent extends Equatable {
 class GetAllFamilyFamilyDataEvent extends FamilyDataEvent {
   const GetAllFamilyFamilyDataEvent();
 }
+
 class WatchAllFamilyFamilyDataEvent extends FamilyDataEvent {
   const WatchAllFamilyFamilyDataEvent();
 }
+
 class InsertFamilyFamilyDataEvent extends FamilyDataEvent {
   const InsertFamilyFamilyDataEvent();
 }
+
 class GetAllFamilyFromCampFamilyDataEvent extends FamilyDataEvent {
   const GetAllFamilyFromCampFamilyDataEvent();
 }
@@ -27,9 +30,16 @@ class WatchAllFamilyFromCampFamilyDataEvent extends FamilyDataEvent {
 class WatchAllFamilyFromRegionFamilyDataEvent extends FamilyDataEvent {
   const WatchAllFamilyFromRegionFamilyDataEvent();
 }
+
 class WatchAllFamilyFromLocationFamilyDataEvent extends FamilyDataEvent {
   const WatchAllFamilyFromLocationFamilyDataEvent();
 }
+
 class ExportToExcelFamilyDataEvent extends FamilyDataEvent {
   const ExportToExcelFamilyDataEvent();
+}
+
+class LoadFromExcelFamilyDataEvent extends FamilyDataEvent {
+  final Uint8List? excelBytes;
+  const LoadFromExcelFamilyDataEvent({required this.excelBytes});
 }

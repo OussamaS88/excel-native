@@ -17,6 +17,8 @@ class FamilyDataBloc extends Bloc<FamilyDataEvent, FamilyDataState> {
   FamilyDataBloc({required this.db, required this.camp, required this.excelApi})
       : super(const FamilyDataState(
           fdStatus: FDStatus.ready,
+          excelRows: [],
+          familyExcelStatus: FamilyExcelStatus.unloaded,
           familyList: [],
           casesCount: 0,
           childrenCount: 0,
@@ -33,6 +35,7 @@ class FamilyDataBloc extends Bloc<FamilyDataEvent, FamilyDataState> {
         _watchAllFamilyFromCampFamilyDataEvent);
     on<InsertFamilyFamilyDataEvent>(_insertFamilyFamilyDataEvent);
     on<ExportToExcelFamilyDataEvent>(_exportToExcelFamilyDataEvent);
+    on<LoadFromExcelFamilyDataEvent>(_loadFromExcelFamilyDataEvent);
     add(const WatchAllFamilyFromCampFamilyDataEvent());
   }
 
@@ -157,5 +160,34 @@ class FamilyDataBloc extends Bloc<FamilyDataEvent, FamilyDataState> {
       excelRows: excelRows,
     );
     emit(state.copyWith(fdStatus: FDStatus.ready));
+  }
+
+  FutureOr<void> _loadFromExcelFamilyDataEvent(
+      LoadFromExcelFamilyDataEvent event, Emitter<FamilyDataState> emit) async {
+    if (state.fdStatus != FDStatus.ready) return null;
+    emit(state.copyWith(fdStatus: FDStatus.loading));
+    if (event.excelBytes == null) {
+      emit(state.copyWith(
+        fdStatus: FDStatus.error,
+      ));
+      return null;
+    }
+    try {
+      List<ExcelRow> l =
+          excelApi.readRowsToExcelRowsFromBytes(event.excelBytes!);
+      emit(state.copyWith(
+        fdStatus: FDStatus.ready,
+        familyExcelStatus: FamilyExcelStatus.loaded,
+        excelRows: l,
+      ));
+      // print("Loaded data successfully.");
+    } catch (e) {
+      emit(state.copyWith(
+        familyExcelStatus: FamilyExcelStatus.error,
+        fdStatus: FDStatus.error,
+      ));
+      print(e);
+      return null;
+    }
   }
 }

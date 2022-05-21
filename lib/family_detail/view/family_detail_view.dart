@@ -14,7 +14,9 @@ class FamilyDetailView extends StatelessWidget {
         appBar: AppBar(title: Text(family.nameEng)),
         body: BlocProvider.value(
           value: context.read<FamilyDataBloc>(),
-          child: const FamilyDetailPage(),
+          child: FamilyDetailPage(
+            family: family,
+          ),
         ));
   }
 }
