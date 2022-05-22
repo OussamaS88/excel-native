@@ -132,7 +132,8 @@ class FamilyDataBloc extends Bloc<FamilyDataEvent, FamilyDataState> {
     if (state.fdStatus != FDStatus.ready) return null;
     emit(state.copyWith(fdStatus: FDStatus.loading));
     List<ExcelRow> excelRows = [];
-    var originalExcel = await rootBundle.load('assets/DATA_STRUCTURE.xlsx');
+    // var originalExcel = await rootBundle.load('assets/DATA_STRUCTURE.xlsx');
+    var originalExcel = await rootBundle.load('assets/FINAL_STRUCTURE.xlsx');
     var bytes = originalExcel.buffer.asUint8List();
     List<Family> familyList = state.familyList;
     for (var family in familyList) {
@@ -203,7 +204,8 @@ class FamilyDataBloc extends Bloc<FamilyDataEvent, FamilyDataState> {
       return null;
     }
     var dao = db.familyDao;
-    int i = 3;
+    // int i = 3;
+    int i = 6;
     for (var row in excelRows) {
       if (i >= 0) {
         i--;
